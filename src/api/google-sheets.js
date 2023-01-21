@@ -14,7 +14,7 @@ export async function appendExpenseRowToSheet(data) {
 					sheetId: SHEET_ID,
 					// row data : https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/sheets#RowData
 					rows: [mapValuesToRowData(data)],
-					fields: '*',
+					fields: '*', // pendiente con esta prop porque npi , puse * porque qmc
 				},
 			],
 			includeSpreadsheetInResponse: true,
