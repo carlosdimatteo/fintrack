@@ -1,41 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Axios from "axios";
 import { Input } from '../../components/Input';
 import { Title, MainContainer } from './Main.styles';
 import { Button } from '../../components/Button';
-import { appendExpenseRowToSheet } from '../../api/google-sheets';
+import { Form } from '../../components/Form'
+
 
 export function Main() {
-	const [username, setUsername] = useState('');
-	useEffect(() => {
-		console.log('loaded');
-	}, []);
+	const [category, setCategory] = useState('');
+	const [expense, setExpense] = useState('');
+	const [description, setDescription] = useState('');
 
-	/**  function handleApiSubmit() {
-		appendExpenseRowToSheet()
-			.then((data) => {
-				succesfully appended mostrar al usuario que esta cuca y reiniciar los inputs 
-			})
-			.catch((error) => {
-				console.log({ error });
-        darle feedback al usuario de que la verga no sirvio y con un mensaje de error pa ver que cono pasa 
-			});
-	} */
+	const postData = (e) => {
+		e.preventDefault()
+		console.log('clicked')
+
+		Axios.post("/api/submit", {
+			category: category,
+			expense: expense,
+			description: description
+		}).then(res => console.log('Posting data', res))
+			.catch(err => console.log(err))
+
+	}
 
 	return (
 		<MainContainer>
 			<Title>{`Track your expense`}</Title>
+			<Form
+				onSubmit={postData}
+			>
+				<label>Category</label>
 			<Input
 				placeholder="Input the value"
-				value={username}
-				onChange={setUsername}
+				value={category}
+				onChange={setCategory}
 			/>
-			<Button
-				onClick={() => {
-					console.log('clicked');
-				}}
-			>
-				TRACK!!!
-			</Button>
+			<label>Amount</label>
+			<Input
+				placeholder="Input the value"
+				value={expense}
+				onChange={setExpense}
+			/>
+			<label>Description</label>
+			<Input
+				placeholder="Input the value"
+				value={description}
+				onChange={setDescription}
+			/>
+			<Button>TRACK!!!</Button>
+			</Form>
 		</MainContainer>
 	);
 }

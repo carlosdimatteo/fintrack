@@ -1,24 +1,18 @@
 import styled from "styled-components";
 
-export const StyledButton = styled.button`
+export const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   background-color: rgb(100, 100, 255, 0.5);
   border-radius: 8px;
   border: 2px solid
     ${({ theme, disabled }) => (disabled ? "gray" : theme.colors.black)};
   padding: 8px;
-  margin: 1.5rem auto;
-  min-width: 4rem;
+  min-width: 5rem;
   font-weight: bold;
   box-sizing: border-box;
   max-width: 20rem;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   pointer-events: ${({ disabled }) => (disabled ? "none" : "all")};
-  &:active {
-
-    transform: scale(.95)
-  }
-
-  &:hover {
-    opacity: 0.6;
-  }
 `;
