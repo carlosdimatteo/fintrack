@@ -15,6 +15,5 @@ export const Title = styled.div`
 `;
 
 export const Text = styled.div`
-  font-size: 0.8rem;
   line-height: 1.2rem;
 `;

@@ -3,15 +3,15 @@ import styled from "styled-components";
 export const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  width: calc(400px * .8);
+  height: calc(812px * .8);
   align-items: center;
   justify-content: center;
-  background-color: rgb(100, 100, 255, 0.5);
+  background: linear-gradient(120deg, rgba(178, 161, 214, 0.2) 19.88%, rgba(79, 170, 190, 0.2) 123.6%);
   border-radius: 8px;
-  border: 2px solid
-    ${({ theme, disabled }) => (disabled ? "gray" : theme.colors.black)};
-  padding: 8px;
+  border-radius: 25px;
+  padding: .1rem;
   min-width: 5rem;
-  font-weight: bold;
   box-sizing: border-box;
   max-width: 20rem;
   pointer-events: ${({ disabled }) => (disabled ? "none" : "all")};

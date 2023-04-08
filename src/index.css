@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@500&display=swap'); 
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  background-color: #0F0F0F;
+  color: #f4f4f4;
+  font-family: 'Barlow'; font-size: 20px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
