@@ -17,42 +17,28 @@ export function Main() {
 			peso: "COP",
 	}
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar)
-	const [text, setText] = useState('')
 
 	function actualCurrency() {
 		if (activeCurrency === currencies.dollar) setActiveCurrency(currencies.peso) 
 		if (activeCurrency === currencies.peso) setActiveCurrency(currencies.dollar)
 	}
 
-	const options = [
-		{label: 'Alojamiento', value: 'alojamiento'},
-		{label: 'Comida', value: 'comida'},
-		{label: 'Viajes', value: 'viajes'},
-		{label: 'Bienestar', value: 'bienestar'},
-		{label: 'Salud', value: 'salud'},
-		{label: 'Ocio y entretenimiento', value: 'ocio y entretenimiento'},
-		{label: 'Transporte', value: 'transporte'},
-		{label: 'Bienes materiales', value: 'bienes materiales'},
-		{label: 'Prestamos e Inversiones', value: 'prestamos e inversiones'},
-		] 
-
 	function clearInput() {
-		setCategory()
+		setCategory(null)
 		setExpense('')
 		setDescription('')
-		setText(null)
 	}
 
 	function checkForm() {
-		if (category === "" && expense === "") alert ("Please select category and input total expense")
-		else if (category === "") alert ("Please select category")
+		if ((category === null || category === "") && expense === "") alert("Please select category and input total expense")
+		else if (category === null || category === "") alert("Please select category")
 		else if (expense === "") alert("Please input total expense")
 		else postData()
 	}
 
 	const postData = () => {
 		Axios.post("/api/submit", {
-			category: category,
+			category: category.value,
 			expense: activeCurrency === currencies.dollar ? expense : ((expense/4800).toFixed(2)),
 			description: description
 		}).then(res => console.log('Posting data', res))
@@ -68,13 +54,14 @@ export function Main() {
 					e.preventDefault()
 				}}
 			>
+
 			<Text>Category</Text>
 			<SelectComp
-				onChange={(e)=>{setCategory(e.value)}}	
-				defaultValue={text}
-				value={text}
-				options={options}						
-			/>
+				defaultValue={category}
+				value={category}
+				onChange={(t) => {setCategory(t)}}					
+				/>
+				
 			<Text>Amount</Text>
 			<StyledDiv>
 				<Input
@@ -82,29 +69,23 @@ export function Main() {
 					onChange={setExpense}
 				/>
 				<CurrencyButton
-					onClick={(e) => {
-						e.preventDefault()
-						console.log("Currency")
-						actualCurrency()	
-					}}	
+					onClick={actualCurrency}	
 				>
 				{activeCurrency}		
 				</CurrencyButton>				
 			</StyledDiv>
-			
+				
 			<Text>Description</Text>
 			<Textarea
 				value={description}
 				onChange={setDescription}
 			/>
+				
 			<Button
-					onClick={(e) => {
-						e.preventDefault()
-						checkForm()
-					}
-						
-					}	
-			>SUBMIT</Button>
+				onClick={() => {checkForm()}}
+			>
+			SUBMIT
+			</Button>
 			</Form>
 		</MainContainer>
 	);

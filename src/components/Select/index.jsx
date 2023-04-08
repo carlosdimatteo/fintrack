@@ -1,6 +1,19 @@
 import Select from 'react-select'
 import { StyledDiv } from "./Select.styles";
 
+const options = [
+  {value: 'alojamiento', label: 'Alojamiento'},
+  {value: 'comida', label: 'Comida'},
+  {value: 'viajes', label: 'Viajes'},
+  {value: 'bienestar', label: 'Bienestar'},
+  {value: 'salud', label: 'Salud'},
+  {value: 'ocio y entretenimiento', label: 'Ocio y Entretenimiento'},
+  {value: 'transporte', label: 'Transporte'},
+  {value: 'bienes materiales', label: 'Bienes Materiales'},
+  {value: 'prestamos e inversiones', label: 'Prestamos e Inversiones'},
+  ] 
+
+
 const colorStyles = {
   control: (styles) => ({
     ...styles,
@@ -17,12 +30,13 @@ const colorStyles = {
   },
 }
 
-export function SelectComp({ onChange, defaultValue, options}) {
+export function SelectComp({ onChange, defaultValue, value}) {
   return (
     <StyledDiv>
       <Select
         onChange={onChange}   
         defaultValue={defaultValue}
+        value={value}
         onFocus={(e) => e.target.readOnly = true}
         options={options}
         styles={colorStyles}
