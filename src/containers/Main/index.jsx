@@ -12,6 +12,7 @@ export function Main() {
 	const [category, setCategory] = useState('');
 	const [expense, setExpense] = useState('');
 	const [description, setDescription] = useState('');
+	const [card, setCard] = useState('');
 	const currencies = {
 		dollar: 'USD',
 		peso: 'COP',
@@ -50,9 +51,10 @@ export function Main() {
 					? expense
 					: (expense / 4600).toFixed(2),
 			description: description,
+			method: card,
 		})
-			.then((res) => {
-				console.log('Posting data', res);
+			.then(({ data }) => {
+				console.log('Posting data', data);
 				clearInput();
 				setLoading(false);
 			})
@@ -81,7 +83,7 @@ export function Main() {
 
 				<Text>Amount</Text>
 				<StyledDiv>
-					<Input value={expense} onChange={setExpense} />
+					<Input type="number" value={expense} onChange={setExpense} />
 					<CurrencyButton onClick={actualCurrency}>
 						{activeCurrency}
 					</CurrencyButton>
@@ -89,6 +91,8 @@ export function Main() {
 
 				<Text>Description</Text>
 				<Textarea value={description} onChange={setDescription} />
+				<Text>Payment Method (optional)</Text>
+				<Input value={card} onChange={setCard} />
 
 				<Button
 					onClick={() => {
