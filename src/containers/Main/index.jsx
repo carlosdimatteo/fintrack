@@ -55,6 +55,7 @@ export function Main() {
 		setCategory(null);
 		setExpense('');
 		setDescription('');
+		setCard(null);
 	}
 
 	function checkForm() {
