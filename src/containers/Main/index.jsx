@@ -44,12 +44,13 @@ export function Main() {
 
 	const postData = () => {
 		setLoading(true);
-		Axios.post('/api/submit', {
+		console.log({ expense });
+		Axios.post('https://fintrack-backend-d3dv.onrender.com/api/submit', {
 			category: category.value,
 			expense:
 				activeCurrency === currencies.dollar
-					? expense
-					: (expense / 4600).toFixed(2),
+					? +expense
+					: (+expense / 4600).toFixed(2),
 			description: description,
 			method: card,
 		})
