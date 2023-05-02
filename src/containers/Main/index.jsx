@@ -76,7 +76,7 @@ export function Main() {
 			category: category.value,
 			expense: isDollar ? +expense : (+expense / 4600).toFixed(2),
 			description: description,
-			method: card,
+			method: card.value,
 			originalAmount,
 		})
 			.then(({ data }) => {
