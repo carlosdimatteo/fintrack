@@ -74,7 +74,7 @@ export function Main() {
 		const isDollar = activeCurrency === currencies.dollar;
 		Axios.post('https://fintrack-backend-d3dv.onrender.com/api/submit', {
 			category: category.value,
-			expense: isDollar ? +expense : (+expense / 4600).toFixed(2),
+			expense: isDollar ? +expense : (+expense / 4000).toFixed(2),
 			description: description,
 			method: card.value,
 			originalAmount,
