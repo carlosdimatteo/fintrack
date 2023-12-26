@@ -72,7 +72,7 @@ export function Main() {
 		console.log({ expense });
 		const originalAmount = +expense;
 		const isDollar = activeCurrency === currencies.dollar;
-		Axios.post('https://fintrack-backend-d3dv.onrender.com/api/submit', {
+		Axios.post('https://fintrack-376102.rj.r.appspot.com/api/submit', {
 			category: category.value,
 			expense: isDollar ? +expense : (+expense / 4000).toFixed(2),
 			description: description,
