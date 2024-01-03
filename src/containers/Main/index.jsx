@@ -21,7 +21,7 @@ const categories = [
 	{ value: 'Bienes materiales (shopping)', label: 'Bienes Materiales' },
 	{ value: 'Prestamos', label: 'Prestamos e Inversiones' },
 	{ value: 'Familia', label: 'Familia' },
-	{ value: 'Servicios', label: 'Servicios / suscripciones' },
+	{ value: 'Servicios / suscripciones', label: 'Servicios / suscripciones' },
 ];
 
 const paymentMethods = [
