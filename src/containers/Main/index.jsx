@@ -72,15 +72,20 @@ export function Main() {
 	const postData = () => {
 		setLoading(true);
 		console.log({ expense });
-		const originalAmount = +expense;
+		const originalAmount = Number(expense);
 		const isDollar = activeCurrency === currencies.dollar;
-		Axios.post('https://fintrack-376102.rj.r.appspot.com/api/submit', {
+		const dataToPost = {
 			category: category.value,
-			expense: isDollar ? +expense : (+expense / 4000).toFixed(2),
+			expense: isDollar ? originalAmount : (originalAmount / 4000).toFixed(2),
 			description: description,
 			method: card.value,
 			originalAmount,
-		})
+		};
+		console.log(dataToPost);
+		Axios.post(
+			'https://fintrack-376102.rj.r.appspot.com/api/submit',
+			dataToPost,
+		)
 			.then(({ data }) => {
 				console.log('Posting data', data);
 				clearInput();
