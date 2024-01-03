@@ -76,7 +76,9 @@ export function Main() {
 		const isDollar = activeCurrency === currencies.dollar;
 		const dataToPost = {
 			category: category.value,
-			expense: isDollar ? originalAmount : (originalAmount / 4000).toFixed(2),
+			expense: isDollar
+				? originalAmount
+				: Number((originalAmount / 4000).toFixed(2)),
 			description: description,
 			method: card.value,
 			originalAmount,
