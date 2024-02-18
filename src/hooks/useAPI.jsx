@@ -6,10 +6,10 @@ export const API_URL = 'https://fintrack-376102.rj.r.appspot.com/api';
 export function useAPI() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-	function submitExpense(dataToPost) {
+	async function submitExpense(dataToPost) {
 		try {
 			setLoading(true);
-			const res = Axios.post(`${API_URL}/submit`, dataToPost);
+			const res = await Axios.post(`${API_URL}/submit`, dataToPost);
 			setLoading(false);
 			return res;
 		} catch (e) {
@@ -17,10 +17,10 @@ export function useAPI() {
 		}
 	}
 
-	function getBudgets() {
+	async function getBudgets() {
 		try {
 			setLoading(true);
-			const res = Axios.get(`${API_URL}/budgets`);
+			const res = await Axios.get(`${API_URL}/budgets`);
 			setLoading(false);
 			return res;
 		} catch (e) {

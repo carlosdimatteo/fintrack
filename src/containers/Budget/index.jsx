@@ -51,7 +51,11 @@ export function Budget() {
 	}
 
 	useEffect(() => {
-		getBudgets();
+		console.log('hey');
+		getBudgets().then((res) => {
+			const data = res?.data;
+			console.log(data);
+		});
 	}, []);
 	return (
 		<BudgetContainer>
