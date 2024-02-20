@@ -3,10 +3,16 @@ import styled from 'styled-components';
 export const MainContainer = styled.div`
 	display: flex;
 	padding: 2rem;
-	justify-content: center;
 	flex-direction: column;
 	align-items: center;
-	gap: 1rem;
+	gap: 4rem;
+	box-sizing: border-box;
+	max-width: 50rem;
+	height: 100vh;
+	@media screen and (max-width: 758px) {
+		padding: 4px;
+	}
+	position: relative;
 `;
 
 export const Title = styled.div`
