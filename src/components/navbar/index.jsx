@@ -1,29 +1,34 @@
 import { NavContainer, NavItem } from './navbar.styles';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ReactComponent as ExpenseIcon } from '../../assets/icons/expense-icon.svg';
+import { ReactComponent as BudgetIcon } from '../../assets/icons/budget.svg';
+import { ReactComponent as BankIcon } from '../../assets/icons/bank.svg';
+import { ReactComponent as InvestmentIcon } from '../../assets/icons/investment.svg';
+import { ReactComponent as DebtIcon } from '../../assets/icons/debt.svg';
 export const tabs = [
 	{
 		name: 'Expenses',
-		icon: 'src/assets/expense.svg',
+		icon: <ExpenseIcon width={32} height={32} />,
 		link: '/expenses',
 	},
 	{
 		name: 'Budget',
-		icon: 'src/assets/budget.svg',
+		icon: <BudgetIcon width={32} height={32} />,
 		link: '/budget',
 	},
 	{
 		name: 'Investments',
-		icon: 'src/assets/investment.svg',
+		icon: <InvestmentIcon width={32} height={32} />,
 		link: '/investment',
 	},
 	{
 		name: 'Debts',
-		icon: 'src/assets/debt.svg',
+		icon: <DebtIcon width={32} height={32} />,
 		link: '/debts',
 	},
 	{
 		name: 'Accounting',
-		icon: 'src/assets/accounting.svg',
+		icon: <BankIcon width={32} height={32} />,
 		link: '/accounting',
 	},
 ];
@@ -42,7 +47,7 @@ export function Navbar() {
 					}}
 					active={pathname === link}
 				>
-					{name}
+					{icon}
 				</NavItem>
 			))}
 		</NavContainer>

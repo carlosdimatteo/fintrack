@@ -44,30 +44,53 @@ export function Budget() {
 		<BudgetContainer>
 			<BudgetTitle>Budget</BudgetTitle>
 
-			<BudgetItem fullWidth>
-				<BudgetItemTitle>Total</BudgetItemTitle>
-				<BudgetAmount>
-					<BudgetAmount color={getColorBySpentAmount(totalSpent, totalAmount)}>
-						{totalSpent.toFixed(2)}
-					</BudgetAmount>
-					/ {totalAmount}
-				</BudgetAmount>
-			</BudgetItem>
-			<BudgetList>
-				{budgets.map(({ amount, spent, category_name: category }, index) => {
-					return (
-						<BudgetItem key={index}>
-							<BudgetItemTitle>{category}</BudgetItemTitle>
-							<BudgetAmount>
-								<BudgetAmount color={getColorBySpentAmount(spent, amount)}>
-									{spent}
-								</BudgetAmount>{' '}
-								/ {amount}
+			{!loading && (
+				<>
+					<BudgetItem fullWidth>
+						<BudgetItemTitle>Total</BudgetItemTitle>
+
+						<div
+							style={{
+								display: 'flex',
+								width: '100%',
+								justifyContent: 'space-between',
+							}}
+						>
+							<BudgetAmount style={{ textAlign: 'left' }}>
+								Remaining: {(totalAmount - totalSpent).toFixed(2)}
 							</BudgetAmount>
-						</BudgetItem>
-					);
-				})}
-			</BudgetList>
+							<BudgetAmount>
+								<BudgetAmount
+									color={getColorBySpentAmount(totalSpent, totalAmount)}
+								>
+									{totalSpent.toFixed(2)}
+								</BudgetAmount>
+								/ {totalAmount}
+							</BudgetAmount>
+						</div>
+					</BudgetItem>
+					<BudgetList>
+						{budgets.map(
+							({ amount, spent, category_name: category }, index) => {
+								return (
+									<BudgetItem key={index}>
+										<BudgetItemTitle>{category}</BudgetItemTitle>
+										<BudgetAmount>
+											<BudgetAmount
+												color={getColorBySpentAmount(spent, amount)}
+											>
+												{spent}
+											</BudgetAmount>{' '}
+											/ {amount}
+										</BudgetAmount>
+									</BudgetItem>
+								);
+							},
+						)}
+					</BudgetList>
+				</>
+			)}
+			{!!loading && <BudgetTitle>Loading...</BudgetTitle>}
 		</BudgetContainer>
 	);
 }

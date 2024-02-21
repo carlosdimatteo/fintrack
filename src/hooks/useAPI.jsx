@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { useState } from 'react';
 
-export const API_URL = 'https://spheric-basis-398613.rj.r.appspot.com/api';
+export const API_URL = 'https://fintrack-376102.rj.r.appspot.com/api';
 
 export function useAPI() {
 	const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export function useAPI() {
 			setLoading(true);
 			console.log('getting budgets');
 			const res = await Axios.get(`${API_URL}/budget`);
-
+			console.log({ res });
 			setLoading(false);
 			return res;
 		} catch (e) {

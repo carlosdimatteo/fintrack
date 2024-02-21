@@ -37,6 +37,7 @@ export const BudgetItem = styled.div`
 	border-radius: 10px;
 	width: ${({ fullWidth }) => (fullWidth ? '100%' : '20rem')};
 	min-height: 3rem;
+	gap: 4px;
 	@media screen and (max-width: 758px) {
 		overflow-x: scroll;
 		width: ${({ fullWidth }) => (fullWidth ? '100%' : '10rem')};
@@ -46,7 +47,7 @@ export const BudgetItem = styled.div`
 `;
 
 export const BudgetItemTitle = styled.span`
-	font-size: 1rem;
+	font-size: 1.1rem;
 	width: 100%;
 	text-align: left;
 	text-overflow: ellipsis;

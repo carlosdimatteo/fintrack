@@ -8,7 +8,7 @@ export const NavContainer = styled.div`
 	max-width: 50rem;
 	justify-content: space-between;
 	box-sizing: border-box;
-
+	gap: 4px;
 	width: max-content;
 	max-width: 100%;
 	position: absolute;
@@ -21,7 +21,7 @@ export const NavContainer = styled.div`
 `;
 
 export const NavItem = styled.div`
-	padding: 2rem;
+	padding: 12px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
