@@ -11,13 +11,20 @@ export const NavContainer = styled.div`
 	gap: 4px;
 	width: max-content;
 	max-width: 100%;
-	position: absolute;
-	bottom: 0;
+	position: sticky;
+
 	scrollbar-color: gray transparent;
 	align-items: center;
+	height: 4rem;
 	@media screen and (max-width: 758px) {
 		overflow-x: scroll;
 	}
+`;
+
+export const PositionContainer = styled.div`
+	position: absolute;
+	bottom: 0px;
+	display: flex;
 `;
 
 export const NavItem = styled.div`

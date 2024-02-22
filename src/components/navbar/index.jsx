@@ -1,4 +1,4 @@
-import { NavContainer, NavItem } from './navbar.styles';
+import { NavContainer, NavItem, PositionContainer } from './navbar.styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as ExpenseIcon } from '../../assets/icons/expense-icon.svg';
 import { ReactComponent as BudgetIcon } from '../../assets/icons/budget.svg';
@@ -38,18 +38,20 @@ export function Navbar() {
 
 	console.log({ pathname });
 	return (
-		<NavContainer>
-			{tabs.map(({ name, icon, link }, index) => (
-				<NavItem
-					key={index}
-					onClick={() => {
-						navigate(link);
-					}}
-					active={pathname === link}
-				>
-					{icon}
-				</NavItem>
-			))}
-		</NavContainer>
+		<PositionContainer>
+			<NavContainer>
+				{tabs.map(({ name, icon, link }, index) => (
+					<NavItem
+						key={index}
+						onClick={() => {
+							navigate(link);
+						}}
+						active={pathname === link}
+					>
+						{icon}
+					</NavItem>
+				))}
+			</NavContainer>
+		</PositionContainer>
 	);
 }
