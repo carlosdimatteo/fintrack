@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAPI } from '../../hooks/useAPI';
 import {
 	BudgetAmount,
@@ -23,21 +23,25 @@ export function Budget() {
 		return '#cf3232';
 	}
 
+	const loadBudgets = useCallback(
+		function () {
+			if (!budgets.length && !loading) {
+				getBudgets()
+					.then((res) => {
+						const data = res?.data;
+						setBudgets(data.budgets);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
+		},
+		[budgets, getBudgets, loading],
+	);
 	useEffect(() => {
-		function loadBudgets() {
-			getBudgets()
-				.then((res) => {
-					const data = res?.data;
-					setBudgets(data.budgets);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
-
 		console.log('hey');
 		loadBudgets();
-	}, [getBudgets]);
+	}, [loadBudgets]);
 
 	const totalAmount = budgets.reduce((acc, { amount }) => acc + amount, 0);
 	const totalSpent = budgets.reduce((acc, { spent }) => acc + spent, 0);
