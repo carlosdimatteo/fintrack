@@ -30,10 +30,22 @@ export function useAPI() {
 		}
 	}
 
+	async function getCategories() {
+		try {
+			setLoading(true);
+			const res = await Axios.get(`${API_URL}/categories`);
+			setLoading(false);
+			return res;
+		} catch (e) {
+			setError(e);
+		}
+	}
+
 	return {
 		error,
 		loading,
 		submitExpense,
 		getBudgets,
+		getCategories,
 	};
 }

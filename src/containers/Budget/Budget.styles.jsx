@@ -39,7 +39,6 @@ export const BudgetItem = styled.div`
 	min-height: 3rem;
 	gap: 4px;
 	@media screen and (max-width: 758px) {
-		overflow-x: scroll;
 		width: ${({ fullWidth }) => (fullWidth ? '100%' : '10rem')};
 		margin: 0;
 	}
