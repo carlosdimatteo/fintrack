@@ -8,23 +8,6 @@ import { Button } from '../../components/Button';
 import { Text } from '../Main/Main.styles';
 import { useAPI } from '../../hooks/useAPI';
 
-const categories = [
-	{ value: 'Alojamiento', label: 'Alojamiento' },
-	{ value: 'Comida', label: 'Comida' },
-	{ value: 'Viajes', label: 'Viajes' },
-	{ value: 'Bienestar', label: 'Bienestar' },
-	{ value: 'Salud', label: 'Salud' },
-	{
-		value: 'Ocio y Entretenimiento (salidas y eventos)',
-		label: 'Ocio y Entretenimiento',
-	},
-	{ value: 'Transporte (taxis)', label: 'Transporte' },
-	{ value: 'Bienes materiales (shopping)', label: 'Bienes Materiales' },
-	{ value: 'Prestamos', label: 'Prestamos e Inversiones' },
-	{ value: 'Familia', label: 'Familia' },
-	{ value: 'Servicios / suscripciones', label: 'Servicios / suscripciones' },
-];
-
 const paymentMethods = [
 	{ value: 'Regions', label: 'Regions' },
 	{ value: 'TD', label: 'TD' },
