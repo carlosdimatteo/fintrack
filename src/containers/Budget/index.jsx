@@ -22,24 +22,26 @@ export function Budget() {
 		}
 		return '#cf3232';
 	}
-	function loadBudgets() {
-		getBudgets()
-			.then((res) => {
-				const data = res?.data;
-				setBudgets(data.budgets);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}
+
+	useEffect(() => {
+		function loadBudgets() {
+			getBudgets()
+				.then((res) => {
+					const data = res?.data;
+					setBudgets(data.budgets);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+
+		console.log('hey');
+		loadBudgets();
+	}, [getBudgets]);
 
 	const totalAmount = budgets.reduce((acc, { amount }) => acc + amount, 0);
 	const totalSpent = budgets.reduce((acc, { spent }) => acc + spent, 0);
 
-	useEffect(() => {
-		console.log('hey');
-		loadBudgets();
-	}, []);
 	return (
 		<BudgetContainer>
 			<BudgetTitle>Budget</BudgetTitle>
