@@ -18,6 +18,7 @@ export const NavContainer = styled.div`
 	height: 4rem;
 	@media screen and (max-width: 758px) {
 		overflow-x: scroll;
+		width: 100vw;
 	}
 `;
 
