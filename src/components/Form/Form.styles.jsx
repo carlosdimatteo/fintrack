@@ -12,5 +12,6 @@ export const StyledForm = styled.form`
 	min-width: 5rem;
 	box-sizing: border-box;
 	max-width: 20rem;
+	gap: 1rem;
 	pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
 `;

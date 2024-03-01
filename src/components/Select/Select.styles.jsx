@@ -1,8 +1,5 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const StyledDiv = styled.div`
-padding: 1rem;
-`
-
-
-
+	padding: 1rem;
+`;

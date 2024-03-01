@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Form } from '../../components/Form';
 import { Input, CurrencyButton } from '../../components/Input';
-import { StyledDiv } from '../../components/Input/Input.styles';
 import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
-import { Text } from '../Main/Main.styles';
+import { PageContainer, Text } from '../Main/Main.styles';
 import { useAPI } from '../../hooks/useAPI';
-
+import { InputContainer } from './Expense.styles';
 const paymentMethods = [
 	{ value: 'Regions', label: 'Regions' },
 	{ value: 'TD', label: 'TD' },
@@ -18,7 +17,6 @@ const paymentMethods = [
 	{ value: 'Payoneer', label: 'Payoneer' },
 	{ value: 'Binance', label: 'Binance' },
 ];
-
 export function Expenses() {
 	const [category, setCategory] = useState('');
 	const [expense, setExpense] = useState('');
@@ -36,6 +34,7 @@ export function Expenses() {
 		return { value: cat.id, label: cat.name };
 	});
 	const { submitExpense, getCategories } = useAPI();
+
 	function actualCurrency() {
 		if (activeCurrency === currencies.dollar)
 			setActiveCurrency(currencies.peso);
@@ -98,48 +97,50 @@ export function Expenses() {
 	});
 
 	return (
-		<Form
-			onSubmit={(e) => {
-				e.preventDefault();
-			}}
-		>
-			<Text>Category</Text>
-			<SelectComp
-				defaultValue={category}
-				value={category}
-				options={categoryOptions}
-				onChange={(t) => {
-					setCategory(t);
-				}}
-			/>
-
-			<Text>Amount</Text>
-			<StyledDiv>
-				<Input type="number" value={expense} onChange={setExpense} />
-				<CurrencyButton onClick={actualCurrency}>
-					{activeCurrency}
-				</CurrencyButton>
-			</StyledDiv>
-
-			<Text>Description</Text>
-			<Textarea value={description} onChange={setDescription} />
-			<Text>Payment Method (optional)</Text>
-			<SelectComp
-				defaultValue={card}
-				value={card}
-				options={paymentMethods}
-				onChange={(t) => {
-					setCard(t);
-				}}
-			/>
-
-			<Button
-				onClick={() => {
-					checkForm();
+		<PageContainer>
+			<Form
+				onSubmit={(e) => {
+					e.preventDefault();
 				}}
 			>
-				{loading ? 'Loading...' : 'SUBMIT'}
-			</Button>
-		</Form>
+				<Text>Category</Text>
+				<SelectComp
+					defaultValue={category}
+					value={category}
+					options={categoryOptions}
+					onChange={(t) => {
+						setCategory(t);
+					}}
+				/>
+
+				<Text>Amount</Text>
+				<InputContainer>
+					<Input type="number" value={expense} onChange={setExpense} />
+					<CurrencyButton onClick={actualCurrency}>
+						{activeCurrency}
+					</CurrencyButton>
+				</InputContainer>
+
+				<Text>Description</Text>
+				<Textarea value={description} onChange={setDescription} />
+				<Text>Payment Method (optional)</Text>
+				<SelectComp
+					defaultValue={card}
+					value={card}
+					options={paymentMethods}
+					onChange={(t) => {
+						setCard(t);
+					}}
+				/>
+
+				<Button
+					onClick={() => {
+						checkForm();
+					}}
+				>
+					{loading ? 'Loading...' : 'SUBMIT'}
+				</Button>
+			</Form>
+		</PageContainer>
 	);
 }

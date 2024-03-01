@@ -9,7 +9,6 @@ export const StyledButton = styled.button`
 	border-radius: 12px;
 	border: 1px solid;
 	padding: 8px;
-	margin: 1.5rem auto;
 	min-width: 4rem;
 	letter-spacing: 0.2rem;
 	font-weight: bold;
