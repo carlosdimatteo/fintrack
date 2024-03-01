@@ -1,9 +1,10 @@
 import { useEffect, useReducer } from 'react';
-import { useAllAcounts } from '../../hooks/useAPI';
+import { useAccounting, useAllAcounts } from '../../hooks/useAPI';
 import { PageContainer, Text, Title } from '../Main/Main.styles';
 import { FormContainer, FormItemContainer } from './Accounting.styles';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { useNavigate } from 'react-router-dom';
 function accountByBalanceReducer(
 	balancesByAccount,
 	{ accountId, balance, reset, resetData },
@@ -26,6 +27,13 @@ function accountByBalanceReducer(
 }
 
 export function Accounting() {
+	const navigate = useNavigate();
+	const { loading, submitAccounting } = useAccounting({
+		onSuccess: function (data) {
+			console.log({ data });
+			navigate('/', { replace: true });
+		},
+	});
 	const { accounts, investmentAccounts } = useAllAcounts({
 		placeholderData: {
 			accounts: [],
@@ -54,7 +62,7 @@ export function Accounting() {
 				};
 			}),
 		};
-		console.log(requestBody);
+		submitAccounting(requestBody);
 	}
 
 	useEffect(() => {
@@ -103,7 +111,9 @@ export function Accounting() {
 								width: '100%',
 							}}
 						>
-							<Button onClick={handleSubmit}>Submit</Button>
+							<Button disabled={loading} onClick={handleSubmit}>
+								Submit
+							</Button>
 						</div>
 					</FormContainer>
 				)}

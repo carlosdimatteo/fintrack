@@ -60,7 +60,6 @@ export function Expenses() {
 
 	const postData = () => {
 		setLoading(true);
-		console.log({ expense });
 		const originalAmount = Number(expense);
 		const isDollar = activeCurrency === currencies.dollar;
 		const dataToPost = {
@@ -73,10 +72,8 @@ export function Expenses() {
 			method: card.value,
 			originalAmount,
 		};
-		console.log(dataToPost);
 		submitExpense(dataToPost)
 			.then(({ data }) => {
-				console.log('Posting data', data);
 				clearInput();
 				setLoading(false);
 			})
@@ -90,7 +87,6 @@ export function Expenses() {
 	useEffect(() => {
 		if (!categories.length) {
 			getCategories().then(({ data: { categories: cats } }) => {
-				console.log({ cats });
 				setCategories(cats);
 			});
 		}

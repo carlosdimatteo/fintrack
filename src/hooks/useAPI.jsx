@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 export const API_URL = 'https://fintrack-376102.rj.r.appspot.com/api';
 const DEFAULT_STALE_TIME = 20 * 1000;
@@ -21,9 +21,9 @@ export function useAPI() {
 	async function getBudgets() {
 		try {
 			setLoading(true);
-			console.log('getting budgets');
+
 			const res = await Axios.get(`${API_URL}/budget`);
-			console.log({ res });
+
 			setLoading(false);
 			return res;
 		} catch (e) {
@@ -60,6 +60,26 @@ export async function getInvestmentAccounts() {
 	const res = await Axios.get(`${API_URL}/investment-accounts`);
 	return res.data;
 }
+export async function setAccountingForTheCurrentMonth(data) {
+	const res = await Axios.post(`${API_URL}/accounting`, data);
+	return res.data;
+}
+
+export function useAccounting(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate } = useMutation({
+		...options,
+		mutationFn: setAccountingForTheCurrentMonth,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		submitAccounting: mutate,
+		mutate,
+	};
+}
 
 export function useAllAcounts(options = {}) {
 	const { data, isLoading, error } = useQuery({
@@ -69,7 +89,6 @@ export function useAllAcounts(options = {}) {
 		queryFn: async () => {
 			const { accounts } = await getAccounts();
 			const { accounts: investmentAccounts } = await getInvestmentAccounts();
-			console.log({ accounts, investmentAccounts });
 			return {
 				accounts,
 				investmentAccounts,

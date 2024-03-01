@@ -18,6 +18,7 @@ export const StyledButton = styled.button`
 	height: 3rem;
 	cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 	pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
+	opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 	&:active {
 		transform: scale(0.95);
 	}
