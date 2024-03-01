@@ -4,6 +4,15 @@ export const BudgetContainer = styled.div`
 	flex-direction: column;
 	display: flex;
 	align-items: center;
+	overflow-y: auto;
+	max-height: 100%;
+	width: 100%;
+	padding: 2rem;
+	box-sizing: border-box;
+	overflow-x: hidden;
+	@media screen and (max-width: 758px) {
+		padding: 6px;
+	}
 `;
 
 export const BudgetTitle = styled.h1`
@@ -32,13 +41,15 @@ export const BudgetItem = styled.div`
 	justify-content: center;
 	flex-direction: column;
 	margin: 1rem;
-	padding: 1rem;
+	padding: 0.5rem;
 	background: ${({ theme: { gradient } }) => gradient.main.background};
 	border-radius: 10px;
 	width: ${({ fullWidth }) => (fullWidth ? '100%' : '20rem')};
 	min-height: 3rem;
-	gap: 4px;
+	height: max-content;
+	box-sizing: border-box;
 	@media screen and (max-width: 758px) {
+		overflow-x: auto;
 		width: ${({ fullWidth }) => (fullWidth ? '100%' : '10rem')};
 		margin: 0;
 	}
@@ -52,6 +63,8 @@ export const BudgetItemTitle = styled.span`
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow-x: hidden;
+	overflow-y: hidden;
+	display: flex;
 `;
 
 export const BudgetAmount = styled.span`

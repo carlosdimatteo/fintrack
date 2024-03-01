@@ -8,7 +8,6 @@ const colorStyles = {
 		width: 'calc(400px * .7);',
 		borderRadius: '10px',
 		border: '1px solid transparent',
-		margin: '10px 0 30px 0',
 		fontFamily: 'Barlow',
 	}),
 	option: (styles, { data }) => {

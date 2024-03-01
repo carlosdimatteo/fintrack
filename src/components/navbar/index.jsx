@@ -36,7 +36,6 @@ export function Navbar() {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 
-	console.log({ pathname });
 	return (
 		<PositionContainer>
 			<NavContainer>

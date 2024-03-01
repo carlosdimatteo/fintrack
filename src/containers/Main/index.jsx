@@ -3,6 +3,7 @@ import { MainContainer, PageContent } from './Main.styles';
 import { Expenses } from '../Expense';
 import { Navbar } from '../../components/navbar';
 import { Budget } from '../Budget';
+import { Accounting } from '../Accounting';
 export function Main() {
 	return (
 		<MainContainer>
@@ -12,6 +13,7 @@ export function Main() {
 						<Route path="/" element={<Navigate to="/expenses" />} />
 						<Route path="/expenses" element={<Expenses />} />
 						<Route path="/budget" element={<Budget />} />
+						<Route path="/accounting" element={<Accounting />} />
 					</Routes>
 				</PageContent>
 				<Navbar />

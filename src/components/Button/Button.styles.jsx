@@ -9,7 +9,6 @@ export const StyledButton = styled.button`
 	border-radius: 12px;
 	border: 1px solid;
 	padding: 8px;
-	margin: 1.5rem auto;
 	min-width: 4rem;
 	letter-spacing: 0.2rem;
 	font-weight: bold;
@@ -19,6 +18,7 @@ export const StyledButton = styled.button`
 	height: 3rem;
 	cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 	pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
+	opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
 	&:active {
 		transform: scale(0.95);
 	}
