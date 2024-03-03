@@ -5,7 +5,7 @@ import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { PageContainer, Text } from '../Main/Main.styles';
-import { useAPI } from '../../hooks/useAPI';
+import { useAPI, useAllAcounts } from '../../hooks/useAPI';
 import { InputContainer } from './Expense.styles';
 const paymentMethods = [
 	{ value: 'Regions', label: 'Regions' },
@@ -26,6 +26,13 @@ export function Expenses() {
 		dollar: 'USD',
 		peso: 'COP',
 	};
+
+	const { accounts, investmentAccounts } = useAllAcounts({
+		placeholderData: {
+			accounts: [],
+			investmentAccounts: [],
+		},
+	});
 
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
 	const [loading, setLoading] = useState(false);
@@ -59,6 +66,10 @@ export function Expenses() {
 	}
 
 	const postData = () => {
+		const foundAccount = accounts.find((acc) => card.value.includes(acc.name));
+		const foundInvestmentAccount = investmentAccounts.find((acc) =>
+			card.value.includes(acc.name),
+		);
 		setLoading(true);
 		const originalAmount = Number(expense);
 		const isDollar = activeCurrency === currencies.dollar;
@@ -71,6 +82,8 @@ export function Expenses() {
 			description: description,
 			method: card.value,
 			originalAmount,
+			account_id: foundAccount?.id || foundInvestmentAccount.id || null,
+			account_type: foundAccount ? 'account' : 'investment_account',
 		};
 		submitExpense(dataToPost)
 			.then(({ data }) => {
