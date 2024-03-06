@@ -43,11 +43,11 @@ export function BudgetView({ budgets }: Props) {
 
             <div className="flex justify-between items-end">
               <div className="text-2xl font-bold">{remaining.toFixed(2)}</div>
-              <div>
-                <span className={`font-bold ${spentColor}`}>
+              <div className="flex flex-col text-right">
+                <div className={`font-bold ${spentColor}`}>
                   {spent.toFixed(2)}
-                </span>
-                / {budget.toFixed(2)}
+                </div>
+                <div>/ {budget.toFixed(2)}</div>
               </div>
             </div>
           </div>

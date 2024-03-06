@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Header } from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,14 +19,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="px-2">
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="w-full max-w-5xl mx-auto pb-12">{children}</div>
+          <Header />
+          <div className="w-full max-w-5xl mx-auto pb-12 pt-24 px-2 lg:px-0">
+            {children}
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>
