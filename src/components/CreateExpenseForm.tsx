@@ -3,19 +3,9 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Button } from "./ui/button";
 import { ErrorResponse, FinTrack } from "@/lib/types";
-import useStore from "@/store";
 import { CreateExpenseSchema } from "@/lib/validations/expense.schema";
 import {
   Select,
@@ -27,26 +17,47 @@ import {
 import { useToast } from "./ui/use-toast";
 import { CURRENCIES, PAYMENT_METHODS } from "@/lib/constants";
 import { Input } from "./ui/input";
+import { createExpense } from "@/app/actions";
 
 const formSchema = CreateExpenseSchema;
 
 interface Props {
   categories: FinTrack.Category[];
+  accounts: FinTrack.Account[];
+  investmentAccounts: FinTrack.Account[];
 }
-export function CreateExpenseForm({ categories }: Props) {
+export function CreateExpenseForm({
+  categories,
+  accounts,
+  investmentAccounts,
+}: Props) {
   const { toast } = useToast();
-  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: 0,
       currency: "USD",
-      description: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const result = { success: true };
+    const foundAccount = accounts.find((a) => values.method.includes(a.name));
+    const foundInvestmentAccount = investmentAccounts.find((a) =>
+      values.method.includes(a.name)
+    );
+    const isUSD = values.currency === "USD";
+
+    const data = {
+      category_id: values.category,
+      category: categories.find((c) => c.id === values.category)!.name,
+      expense: isUSD
+        ? values.amount
+        : Number((values.amount / 4000).toFixed(2)),
+      description: values.description,
+      method: values.method,
+      account_id: foundAccount?.id ?? foundInvestmentAccount?.id ?? null,
+      account_type: foundAccount ? "account" : "investment_account",
+    };
+    const result = await createExpense(data);
 
     if (result.success) {
       toast({
@@ -57,9 +68,13 @@ export function CreateExpenseForm({ categories }: Props) {
     } else {
       toast({
         title: "An error occured!",
-        // description: (result as ErrorResponse).message,
+        description: (result as ErrorResponse).message,
       });
     }
+  }
+
+  function clearForm() {
+    form.reset();
   }
 
   return (
@@ -184,7 +199,9 @@ export function CreateExpenseForm({ categories }: Props) {
         />
 
         <div className="flex flex-row items-center justify-between w-full gap-4 pt-2">
-          <Button variant="outline">Clear</Button>
+          <Button variant="outline" onClick={clearForm}>
+            Clear
+          </Button>
           <Button type="submit">Add</Button>
         </div>
       </form>

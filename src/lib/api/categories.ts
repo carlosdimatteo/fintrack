@@ -3,9 +3,9 @@ import { ErrorResponse, FinTrack } from "../types";
 import { handleError } from "./handleError";
 import { handleResponse } from "./handleResponse";
 
-export async function getCategories(
-  token?: string
-): Promise<FinTrack.CategoryListResponse | ErrorResponse> {
+export async function apiGetCategories(): Promise<
+  FinTrack.CategoryListResponse | ErrorResponse
+> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };

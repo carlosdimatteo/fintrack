@@ -3,21 +3,20 @@ import { ErrorResponse, FinTrack } from "../types";
 import { handleError } from "./handleError";
 import { handleResponse } from "./handleResponse";
 
-export async function apiCreateExpense(
-  data: FinTrack.CreateExpenseInput
-): Promise<FinTrack.CreateExpenseResponse | ErrorResponse> {
+export async function apiGetBudgets(): Promise<
+  FinTrack.BudgetListResponse | ErrorResponse
+> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(`${ENV.API_ENDPOINT}/submit`, {
-    method: "POST",
+  const response = await fetch(`${ENV.API_ENDPOINT}/budget`, {
+    method: "GET",
     credentials: "include",
-    body: JSON.stringify(data),
     headers,
   });
 
-  return handleResponse<FinTrack.CreateExpenseResponse>(response)
+  return handleResponse<FinTrack.BudgetListResponse>(response)
     .then((data) => data)
     .catch(handleError);
 }

@@ -18,14 +18,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="px-12">
+      <body className="px-2">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="w-full max-w-5xl mx-auto pb-12">{children}</div>
           <Toaster />
         </ThemeProvider>
       </body>
