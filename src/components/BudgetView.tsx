@@ -1,14 +1,7 @@
 "use client";
 
 import { FinTrack } from "@/lib/types";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Sumana } from "next/font/google";
+import { Card, CardContent, CardDescription } from "./ui/card";
 import {
   Table,
   TableBody,
@@ -23,8 +16,6 @@ interface Props {
   budgets: FinTrack.Budget[];
 }
 export function BudgetView({ budgets }: Props) {
-  // sort budgets from most amount to less amount
-  const budgetList = budgets.sort((a, b) => b.amount - a.amount);
   const budget = budgets.reduce((acc, budget) => acc + budget.amount, 0);
   const spent = budgets.reduce((acc, budget) => acc + budget.spent, 0);
   const remaining = budget - spent;
@@ -79,7 +70,7 @@ export function BudgetView({ budgets }: Props) {
 
                 return (
                   <TableRow key={budget.caegory_id}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium text-blue-500">
                       {budget.category_name}
                     </TableCell>
                     <TableCell className="font-bold">

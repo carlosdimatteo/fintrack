@@ -38,3 +38,22 @@ export async function apiGetInvestmentAccounts(): Promise<
     .then((data) => data)
     .catch(handleError);
 }
+
+export async function apiUpdateAccounts(
+  data: FinTrack.UpdateAccountsInput
+): Promise<FinTrack.UpdateAccountsResponse | ErrorResponse> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  const response = await fetch(`${ENV.API_ENDPOINT}/accounting`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(data),
+    headers,
+  });
+
+  return handleResponse<FinTrack.UpdateAccountsResponse>(response)
+    .then((data) => data)
+    .catch(handleError);
+}

@@ -25,6 +25,16 @@ export namespace FinTrack {
     accounts: Account[];
   };
 
+  export type UpdateAccountsInput = {
+    accounts: Account[];
+    investmentAccounts: Account[];
+  };
+
+  export type UpdateAccountsResponse = {
+    success: boolean;
+    message: string;
+  };
+
   export type CreateExpenseInput = {
     category_id: number;
     category: string;

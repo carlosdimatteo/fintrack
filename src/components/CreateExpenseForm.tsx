@@ -18,6 +18,8 @@ import { useToast } from "./ui/use-toast";
 import { CURRENCIES, PAYMENT_METHODS } from "@/lib/constants";
 import { Input } from "./ui/input";
 import { createExpense } from "@/app/actions";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = CreateExpenseSchema;
 
@@ -31,6 +33,7 @@ export function CreateExpenseForm({
   accounts,
   investmentAccounts,
 }: Props) {
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,6 +43,7 @@ export function CreateExpenseForm({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     const foundAccount = accounts.find((a) => values.method.includes(a.name));
     const foundInvestmentAccount = investmentAccounts.find((a) =>
       values.method.includes(a.name)
@@ -71,6 +75,7 @@ export function CreateExpenseForm({
         description: (result as ErrorResponse).message,
       });
     }
+    setLoading(false);
   }
 
   function clearForm() {
@@ -202,7 +207,9 @@ export function CreateExpenseForm({
           <Button variant="outline" onClick={clearForm}>
             Clear
           </Button>
-          <Button type="submit">Add</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? <Loader2 className="animate-spin" /> : "Submit"}
+          </Button>
         </div>
       </form>
     </Form>
