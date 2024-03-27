@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useAPI } from '../../hooks/useAPI';
 import {
 	BudgetAmount,
 	BudgetContainer,
@@ -8,10 +6,12 @@ import {
 	BudgetList,
 	BudgetTitle,
 } from './Budget.styles';
+import { useBudgets } from '../../hooks/useAPI';
 
 export function Budget() {
-	const [budgets, setBudgets] = useState([]);
-	const { getBudgets, loading } = useAPI();
+	const { budgets, isLoading: loading } = useBudgets({
+		placeholderData: [],
+	});
 	function getColorBySpentAmount(spent, total) {
 		const percentage = (spent / total) * 100;
 		if (percentage < 80) {
@@ -22,26 +22,6 @@ export function Budget() {
 		}
 		return '#cf3232';
 	}
-
-	const loadBudgets = useCallback(
-		function () {
-			if (!budgets.length && !loading) {
-				getBudgets()
-					.then((res) => {
-						const data = res?.data;
-						setBudgets(data.budgets);
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			}
-		},
-		[budgets, getBudgets, loading],
-	);
-	useEffect(() => {
-		console.log('hey');
-		loadBudgets();
-	}, [loadBudgets]);
 
 	const totalAmount = budgets.reduce((acc, { amount }) => acc + amount, 0);
 	const totalSpent = budgets.reduce((acc, { spent }) => acc + spent, 0);

@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Form } from '../../components/Form';
 import { Input, CurrencyButton } from '../../components/Input';
 import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { PageContainer, Text } from '../Main/Main.styles';
-import { useAPI, useAllAcounts } from '../../hooks/useAPI';
+import {
+	useAllAcounts,
+	useCategories,
+	useSubmitExpense,
+} from '../../hooks/useAPI';
 import { InputContainer } from './Expense.styles';
 const paymentMethods = [
 	{ value: 'Regions', label: 'Regions' },
@@ -35,12 +39,18 @@ export function Expenses() {
 	});
 
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
-	const [loading, setLoading] = useState(false);
-	const [categories, setCategories] = useState([]);
+	const { categories } = useCategories({ placeholderData: [] });
 	const categoryOptions = categories.map((cat) => {
 		return { value: cat.id, label: cat.name };
 	});
-	const { submitExpense, getCategories } = useAPI();
+	const { submitExpense, loading } = useSubmitExpense({
+		onError() {
+			alert('error on submit, check console log');
+		},
+		onSuccess() {
+			clearInput();
+		},
+	});
 
 	function actualCurrency() {
 		if (activeCurrency === currencies.dollar)
@@ -70,7 +80,6 @@ export function Expenses() {
 		const foundInvestmentAccount = investmentAccounts.find((acc) =>
 			card.value.includes(acc.name),
 		);
-		setLoading(true);
 		const originalAmount = Number(expense);
 		const isDollar = activeCurrency === currencies.dollar;
 		const dataToPost = {
@@ -85,25 +94,8 @@ export function Expenses() {
 			account_id: foundAccount?.id || foundInvestmentAccount.id || null,
 			account_type: foundAccount ? 'account' : 'investment_account',
 		};
-		submitExpense(dataToPost)
-			.then(({ data }) => {
-				clearInput();
-				setLoading(false);
-			})
-			.catch((err) => {
-				console.log(err);
-				alert('error on submit, check console log');
-				setLoading(false);
-			});
+		submitExpense(dataToPost);
 	};
-
-	useEffect(() => {
-		if (!categories.length) {
-			getCategories().then(({ data: { categories: cats } }) => {
-				setCategories(cats);
-			});
-		}
-	});
 
 	return (
 		<PageContainer>
