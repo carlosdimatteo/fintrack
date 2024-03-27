@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
-export const API_URL = 'https://fintrack-376102.rj.r.appspot.com/api';
+export const API_URL = process.env.REACT_APP_API_URL;
 const DEFAULT_STALE_TIME = 20 * 1000;
 
 async function submitExpense(dataToPost) {
