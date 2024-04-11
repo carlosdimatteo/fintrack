@@ -4,6 +4,10 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 export const API_URL = process.env.REACT_APP_API_URL;
 const DEFAULT_STALE_TIME = 20 * 1000;
 
+async function submitIncome(income) {
+	const res = await Axios.post(`${API_URL}/income`, income);
+}
+
 async function submitExpense(dataToPost) {
 	const res = await Axios.post(`${API_URL}/submit`, dataToPost);
 	return res;
@@ -45,6 +49,22 @@ export function useSubmitExpense(options = {}) {
 		loading: isPending,
 		data,
 		submitExpense: mutate,
+		mutate,
+	};
+}
+
+export function useSubmitIncome(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate } = useMutation({
+		...options,
+		mutationFn: submitIncome,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		submitIncome: mutate,
 		mutate,
 	};
 }
