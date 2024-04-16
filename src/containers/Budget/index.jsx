@@ -4,9 +4,9 @@ import {
 	BudgetItem,
 	BudgetItemTitle,
 	BudgetList,
-	BudgetTitle,
 } from './Budget.styles';
 import { useBudgets } from '../../hooks/useAPI';
+import { Title } from '../Main/Main.styles';
 
 export function Budget() {
 	const { budgets, isLoading: loading } = useBudgets({
@@ -28,7 +28,7 @@ export function Budget() {
 
 	return (
 		<BudgetContainer>
-			<BudgetTitle>Budget</BudgetTitle>
+			<Title>Budget</Title>
 
 			{!loading && (
 				<>
@@ -76,7 +76,7 @@ export function Budget() {
 					</BudgetList>
 				</>
 			)}
-			{!!loading && <BudgetTitle>Loading...</BudgetTitle>}
+			{!!loading && <Title>Loading...</Title>}
 		</BudgetContainer>
 	);
 }

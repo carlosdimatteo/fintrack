@@ -4,14 +4,14 @@ import { Input, CurrencyButton } from '../../components/Input';
 import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
-import { PageContainer, Text } from '../Main/Main.styles';
+import { PageContainer, Text, Title } from '../Main/Main.styles';
 import {
 	useAllAcounts,
 	useCategories,
 	useSubmitExpense,
 } from '../../hooks/useAPI';
 import { InputContainer } from './Expense.styles';
-const paymentMethods = [
+export const paymentMethods = [
 	{ value: 'Regions', label: 'Regions' },
 	{ value: 'TD', label: 'TD' },
 	{ value: 'BBVA Debit', label: 'BBVA Debit' },
@@ -91,7 +91,7 @@ export function Expenses() {
 			description: description,
 			method: card.value,
 			originalAmount,
-			account_id: foundAccount?.id || foundInvestmentAccount.id || null,
+			account_id: foundAccount?.id || foundInvestmentAccount?.id || null,
 			account_type: foundAccount ? 'account' : 'investment_account',
 		};
 		submitExpense(dataToPost);
@@ -99,6 +99,7 @@ export function Expenses() {
 
 	return (
 		<PageContainer>
+			<Title>Expense</Title>
 			<Form
 				onSubmit={(e) => {
 					e.preventDefault();

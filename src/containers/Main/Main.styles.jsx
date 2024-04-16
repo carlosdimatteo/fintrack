@@ -25,7 +25,7 @@ export const PageContent = styled.div`
 	}
 `;
 
-export const Title = styled.div`
+export const Title = styled.h1`
 	font-size: 2rem;
 	line-height: 4rem;
 `;
