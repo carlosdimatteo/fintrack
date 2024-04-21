@@ -11,6 +11,7 @@ export function Main() {
 			<BrowserRouter>
 				<PageContent>
 					<Routes>
+						<Route path="/" element={<Navigate to="/expenses" replace />} />
 						<Route path="/expenses" element={<Expenses />} />
 						<Route path="/budget" element={<Budget />} />
 						<Route path="/income" element={<Income />} />
