@@ -94,6 +94,7 @@ export function Income() {
 					onClick={() => {
 						postData();
 					}}
+					disabled={loading}
 				>
 					{' '}
 					{'SUBMIT'}

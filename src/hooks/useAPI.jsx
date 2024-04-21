@@ -6,6 +6,7 @@ const DEFAULT_STALE_TIME = 20 * 1000;
 
 async function submitIncome(income) {
 	const res = await Axios.post(`${API_URL}/income`, income);
+	return res;
 }
 
 async function submitExpense(dataToPost) {
