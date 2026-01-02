@@ -8,7 +8,6 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { CurrencyButton } from '../../components/Input';
 import { SelectComp } from '../../components/Select';
-import { paymentMethods } from '../Expense';
 import { useAllAcounts, useSubmitIncome } from '../../hooks/useAPI';
 
 export function Income() {
@@ -18,6 +17,16 @@ export function Income() {
 	};
 	const [description, setDescription] = useState('');
 	const [account, setAccount] = useState('');
+	const { accounts, investmentAccounts } = useAllAcounts({
+		placeholderData: {
+			accounts: [],
+			investmentAccounts: [],
+		},
+	});
+	const methods = [...accounts, ...investmentAccounts].map((a) => ({
+		value: a.name,
+		label: a.name,
+	}));
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
 	const [income, setIncome] = useState('');
 	const { all } = useAllAcounts({
@@ -74,7 +83,7 @@ export function Income() {
 				<SelectComp
 					defaultValue={account}
 					value={account}
-					options={paymentMethods}
+					options={methods}
 					onChange={(t) => {
 						setAccount(t);
 					}}

@@ -11,16 +11,7 @@ import {
 	useSubmitExpense,
 } from '../../hooks/useAPI';
 import { InputContainer } from './Expense.styles';
-export const paymentMethods = [
-	{ value: 'Regions', label: 'Regions' },
-	{ value: 'TD', label: 'TD' },
-	{ value: 'BBVA Debit', label: 'BBVA Debit' },
-	{ value: 'BBVA Credit', label: 'BBVA Credit' },
-	{ value: 'BBVA PSE', label: 'BBVA PSE' },
-	{ value: 'Deel', label: 'Deel' },
-	{ value: 'Payoneer', label: 'Payoneer' },
-	{ value: 'Binance', label: 'Binance' },
-];
+
 export function Expenses() {
 	const [category, setCategory] = useState('');
 	const [expense, setExpense] = useState('');
@@ -37,6 +28,10 @@ export function Expenses() {
 			investmentAccounts: [],
 		},
 	});
+	const methods = [...accounts, ...investmentAccounts].map((a) => ({
+		value: a.name,
+		label: a.name,
+	}));
 
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
 	const { categories } = useCategories({ placeholderData: [] });
@@ -129,7 +124,7 @@ export function Expenses() {
 				<SelectComp
 					defaultValue={card}
 					value={card}
-					options={paymentMethods}
+					options={methods}
 					onChange={(t) => {
 						setCard(t);
 					}}
