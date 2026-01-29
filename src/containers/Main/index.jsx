@@ -7,6 +7,7 @@ import { Accounting } from '../Accounting';
 import { Income } from '../Income';
 import { Debt } from '../Debt';
 import { Investment } from '../Investment';
+import { Transfer } from '../Transfer';
 import { Showcase } from '../Showcase';
 
 export function Main() {
@@ -20,6 +21,7 @@ export function Main() {
 						<Route path="/budget" element={<Budget />} />
 						<Route path="/income" element={<Income />} />
 						<Route path="/investment/*" element={<Investment />} />
+						<Route path="/transfers/*" element={<Transfer />} />
 						<Route path="/debts/*" element={<Debt />} />
 						<Route path="/accounting" element={<Accounting />} />
 						<Route path="/showcase" element={<Showcase />} />

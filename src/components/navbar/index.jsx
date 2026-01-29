@@ -6,6 +6,7 @@ import { ReactComponent as BankIcon } from '../../assets/icons/bank.svg';
 import { ReactComponent as InvestmentIcon } from '../../assets/icons/investment.svg';
 import { ReactComponent as IncomeIcon } from '../../assets/icons/income.svg';
 import { ReactComponent as DebtIcon } from '../../assets/icons/debt.svg';
+import { ReactComponent as TransferIcon } from '../../assets/icons/transfer.svg';
 export const tabs = [
 	{
 		name: 'Expenses',
@@ -26,6 +27,11 @@ export const tabs = [
 		name: 'Investments',
 		icon: <InvestmentIcon width={32} height={32} />,
 		link: '/investment',
+	},
+	{
+		name: 'Transfers',
+		icon: <TransferIcon width={32} height={32} />,
+		link: '/transfers',
 	},
 	{
 		name: 'Debts',

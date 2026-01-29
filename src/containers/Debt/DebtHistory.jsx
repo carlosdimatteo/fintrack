@@ -4,6 +4,7 @@ import { useDebtHistory, useDebtsByDebtor } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
 import { Button } from '../../components/Button';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 const BackButton = styled.button`
 	background: transparent;
@@ -97,6 +98,23 @@ const TransactionDate = styled.span`
 	color: ${({ theme }) => theme.colors.text.muted};
 `;
 
+const LinkedBadge = styled.span`
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 10px;
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: ${({ $type }) => 
+		$type === 'expense' 
+			? 'rgba(248, 113, 113, 0.15)' 
+			: 'rgba(74, 222, 128, 0.15)'};
+	color: ${({ $type }) => 
+		$type === 'expense' ? '#f87171' : '#4ade80'};
+	text-transform: uppercase;
+	font-weight: 600;
+`;
+
 const TransactionAmount = styled.span`
 	font-size: ${({ theme }) => theme.typography.sizes.base};
 	font-weight: ${({ theme }) => theme.typography.weights.semibold};
@@ -108,22 +126,6 @@ const EmptyState = styled.div`
 	color: ${({ theme }) => theme.colors.text.muted};
 	padding: ${({ theme }) => theme.spacing.xl};
 `;
-
-function formatCurrency(amount) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-	}).format(Math.abs(amount));
-}
-
-function formatDate(dateString) {
-	const date = new Date(dateString);
-	return date.toLocaleDateString('en-US', {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	});
-}
 
 export function DebtHistory() {
 	const { debtorId } = useParams();
@@ -173,6 +175,12 @@ export function DebtHistory() {
 								<TransactionInfo>
 									<TransactionType $outbound={debt.outbound}>
 										{debt.outbound ? 'Lent' : 'Received'}
+										{debt.expense_id && (
+											<LinkedBadge $type="expense">Expense</LinkedBadge>
+										)}
+										{debt.income_id && (
+											<LinkedBadge $type="income">Income</LinkedBadge>
+										)}
 									</TransactionType>
 									{debt.description && (
 										<TransactionDescription>{debt.description}</TransactionDescription>

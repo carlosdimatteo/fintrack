@@ -4,6 +4,7 @@ import { useInvestmentTransactions } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingText } from '../../components/Layout';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -87,22 +88,6 @@ const LoadMoreContainer = styled.div`
 `;
 
 const PAGE_SIZE = 20;
-
-function formatCurrency(amount) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-	}).format(amount);
-}
-
-function formatDate(dateString) {
-	const date = new Date(dateString);
-	return date.toLocaleDateString('en-US', {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	});
-}
 
 export function InvestmentHistory() {
 	const [offset, setOffset] = useState(0);

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useInvestmentSummary } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
+import { formatCurrency, formatPercent } from '../../utils/formatters';
 
 const PortfolioContainer = styled.div`
 	display: flex;
@@ -104,18 +105,6 @@ const EmptyState = styled.div`
 	color: ${({ theme }) => theme.colors.text.muted};
 	padding: ${({ theme }) => theme.spacing.xl};
 `;
-
-function formatCurrency(amount) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-	}).format(amount);
-}
-
-function formatPercent(value) {
-	const sign = value >= 0 ? '+' : '';
-	return `${sign}${value.toFixed(2)}%`;
-}
 
 export function PortfolioView() {
 	const { accounts, isLoading, error } = useInvestmentSummary();

@@ -3,6 +3,7 @@ import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
 import { useState, useEffect } from 'react';
 import { useExpenseList } from '../../hooks/useAPI';
+import { formatCurrency, formatDateTime } from '../../utils/formatters';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -61,6 +62,11 @@ const Amount = styled.span`
 	color: #f87171;
 `;
 
+const OriginalAmount = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.xs};
+	color: ${({ theme }) => theme.colors.text.muted};
+`;
+
 const LoadMoreButton = styled.button`
 	display: block;
 	width: 100%;
@@ -91,22 +97,6 @@ const EmptyState = styled.div`
 	color: ${({ theme }) => theme.colors.text.muted};
 	padding: ${({ theme }) => theme.spacing.xl};
 `;
-
-function formatDate(dateString) {
-	const date = new Date(dateString);
-	return date.toLocaleDateString('en-US', {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric',
-	});
-}
-
-function formatCurrency(amount) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-	}).format(amount);
-}
 
 export function ExpenseHistory() {
 	const [allExpenses, setAllExpenses] = useState([]);
@@ -167,12 +157,17 @@ export function ExpenseHistory() {
 								<ExpenseDescription>{expense.description}</ExpenseDescription>
 							)}
 							<ExpenseMeta>
-								{formatDate(expense.date)}
-								{expense.account_name && ` • ${expense.account_name}`}
+								{formatDateTime(expense.date)}
+								{expense.method && ` • ${expense.method}`}
 							</ExpenseMeta>
 						</ExpenseInfo>
 						<ExpenseAmount>
 							<Amount>{formatCurrency(expense.expense)}</Amount>
+							{expense.originalAmount && expense.originalAmount !== expense.expense && (
+								<OriginalAmount>
+									{expense.originalAmount.toLocaleString()} COP
+								</OriginalAmount>
+							)}
 						</ExpenseAmount>
 					</ExpenseItem>
 				))}

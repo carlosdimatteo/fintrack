@@ -16,6 +16,7 @@ import {
 	useCreateDebtor,
 	useSubmitExpenseWithDebt,
 } from '../../hooks/useAPI';
+import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 // Debt split section styles
 const SplitToggle = styled.div`
@@ -190,13 +191,6 @@ const SmallButton = styled.button`
 	`}
 `;
 
-const CURRENCIES = {
-	dollar: 'USD',
-	peso: 'COP',
-};
-
-const EXCHANGE_RATE = 4000;
-
 export function ExpenseForm({ onSuccess }) {
 	const toast = useToast();
 	
@@ -205,7 +199,7 @@ export function ExpenseForm({ onSuccess }) {
 	const [expense, setExpense] = useState('');
 	const [description, setDescription] = useState('');
 	const [account, setAccount] = useState(null);
-	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.dollar);
+	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
 	
 	// Debt split state
 	const [splitEnabled, setSplitEnabled] = useState(false);
@@ -270,9 +264,7 @@ export function ExpenseForm({ onSuccess }) {
 	
 	// Handlers
 	function toggleCurrency() {
-		setActiveCurrency((prev) =>
-			prev === CURRENCIES.dollar ? CURRENCIES.peso : CURRENCIES.dollar
-		);
+		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
 	}
 	
 	function clearForm() {
@@ -340,10 +332,7 @@ export function ExpenseForm({ onSuccess }) {
 		if (!validate()) return;
 		
 		const originalAmount = Number(expense);
-		const isDollar = activeCurrency === CURRENCIES.dollar;
-		const convertedAmount = isDollar
-			? originalAmount
-			: Number((originalAmount / EXCHANGE_RATE).toFixed(2));
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
 		
 		const expenseData = {
 			category_id: category.value,
@@ -362,9 +351,7 @@ export function ExpenseForm({ onSuccess }) {
 				.filter((d) => d.debtor && d.amount)
 				.map((d) => ({
 					debtor_id: d.debtor.value,
-					amount: isDollar
-						? Number(d.amount)
-						: Number((Number(d.amount) / EXCHANGE_RATE).toFixed(2)),
+					amount: convertToUSD(Number(d.amount), activeCurrency),
 				}));
 			
 			submitExpenseWithDebt({

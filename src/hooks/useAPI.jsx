@@ -418,3 +418,55 @@ export function useInvestmentSummary(options = {}) {
 		refetch,
 	};
 }
+
+// ============================================
+// Transfer Hooks
+// ============================================
+
+// POST /api/transfer - Create transfer between accounts
+async function createTransfer(data) {
+	const res = await Axios.post(`${API_URL}/transfer`, data);
+	return res.data;
+}
+
+export function useCreateTransfer(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: createTransfer,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		createTransfer: mutate,
+		mutate,
+		reset,
+	};
+}
+
+// GET /api/transfers - Transfer history with pagination
+async function getTransfers(limit, offset) {
+	const res = await Axios.get(`${API_URL}/transfers`, {
+		params: { limit, offset },
+	});
+	return res.data;
+}
+
+export function useTransfers(limit = 20, offset = 0, options = {}) {
+	const { data, isLoading, isFetching, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['transfers', limit, offset],
+		queryFn: () => getTransfers(limit, offset),
+	});
+	return {
+		transfers: data?.transfers ?? [],
+		count: data?.count ?? 0,
+		isLoading,
+		isFetching,
+		error,
+		refetch,
+	};
+}

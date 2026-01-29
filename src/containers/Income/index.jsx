@@ -9,12 +9,9 @@ import { Input } from '../../components/Input';
 import { CurrencyButton } from '../../components/Input';
 import { SelectComp } from '../../components/Select';
 import { useAllAccounts, useSubmitIncome } from '../../hooks/useAPI';
+import { CURRENCIES, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 export function Income() {
-	const currencies = {
-		dollar: 'USD',
-		peso: 'COP',
-	};
 	const [description, setDescription] = useState('');
 	const [account, setAccount] = useState('');
 	const { accounts, investmentAccounts } = useAllAccounts({
@@ -27,7 +24,7 @@ export function Income() {
 		value: a.name,
 		label: a.name,
 	}));
-	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
+	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
 	const [income, setIncome] = useState('');
 	const { all } = useAllAccounts({
 		placeholderData: {
@@ -35,11 +32,8 @@ export function Income() {
 		},
 	});
 
-	function actualCurrency() {
-		if (activeCurrency === currencies.dollar)
-			setActiveCurrency(currencies.peso);
-		if (activeCurrency === currencies.peso)
-			setActiveCurrency(currencies.dollar);
+	function toggleCurrency() {
+		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
 	}
 
 	const postData = () => {
@@ -92,7 +86,7 @@ export function Income() {
 				<Text>Amount</Text>
 				<InputContainer>
 					<Input type="number" value={income} onChange={setIncome} />
-					<CurrencyButton onClick={actualCurrency}>
+					<CurrencyButton onClick={toggleCurrency}>
 						{activeCurrency}
 					</CurrencyButton>
 				</InputContainer>

@@ -9,6 +9,7 @@ import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
 import { useAllAccounts, useCreateInvestment } from '../../hooks/useAPI';
+import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 const TypeToggle = styled.div`
 	display: flex;
@@ -49,13 +50,6 @@ const ArrowIndicator = styled.div`
 	font-size: 20px;
 `;
 
-const CURRENCIES = {
-	dollar: 'USD',
-	peso: 'COP',
-};
-
-const EXCHANGE_RATE = 4000;
-
 export function InvestmentForm({ onSuccess }) {
 	const toast = useToast();
 	
@@ -65,7 +59,7 @@ export function InvestmentForm({ onSuccess }) {
 	const [fiatAccount, setFiatAccount] = useState(null);
 	const [amount, setAmount] = useState('');
 	const [description, setDescription] = useState('');
-	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.dollar);
+	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
 	
 	// API hooks
 	const { accounts, investmentAccounts } = useAllAccounts();
@@ -91,9 +85,7 @@ export function InvestmentForm({ onSuccess }) {
 	}));
 	
 	function toggleCurrency() {
-		setActiveCurrency((prev) =>
-			prev === CURRENCIES.dollar ? CURRENCIES.peso : CURRENCIES.dollar
-		);
+		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
 	}
 	
 	function clearForm() {
@@ -123,10 +115,7 @@ export function InvestmentForm({ onSuccess }) {
 		if (!validate()) return;
 		
 		const originalAmount = Number(amount);
-		const isDollar = activeCurrency === CURRENCIES.dollar;
-		const convertedAmount = isDollar
-			? originalAmount
-			: Number((originalAmount / EXCHANGE_RATE).toFixed(2));
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
 		
 		createInvestment({
 			amount: convertedAmount,

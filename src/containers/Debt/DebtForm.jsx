@@ -16,6 +16,7 @@ import {
 	useDebtRepayment,
 	useExpenseList,
 } from '../../hooks/useAPI';
+import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 const DirectionToggle = styled.div`
 	display: flex;
@@ -130,13 +131,6 @@ const CheckboxLabel = styled.span`
 	color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
-const CURRENCIES = {
-	dollar: 'USD',
-	peso: 'COP',
-};
-
-const EXCHANGE_RATE = 4000;
-
 export function DebtForm({ onSuccess }) {
 	const toast = useToast();
 	
@@ -146,7 +140,7 @@ export function DebtForm({ onSuccess }) {
 	const [direction, setDirection] = useState('outbound'); // outbound = they owe me
 	const [description, setDescription] = useState('');
 	const [linkedExpense, setLinkedExpense] = useState(null);
-	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.dollar);
+	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
 	const [receivedPayment, setReceivedPayment] = useState(false);
 	const [account, setAccount] = useState(null);
 	
@@ -214,9 +208,7 @@ export function DebtForm({ onSuccess }) {
 	}));
 	
 	function toggleCurrency() {
-		setActiveCurrency((prev) =>
-			prev === CURRENCIES.dollar ? CURRENCIES.peso : CURRENCIES.dollar
-		);
+		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
 	}
 	
 	function clearForm() {
@@ -258,10 +250,7 @@ export function DebtForm({ onSuccess }) {
 		if (!validate()) return;
 		
 		const originalAmount = Number(amount);
-		const isDollar = activeCurrency === CURRENCIES.dollar;
-		const convertedAmount = isDollar
-			? originalAmount
-			: Number((originalAmount / EXCHANGE_RATE).toFixed(2));
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
 		
 		if (receivedPayment) {
 			// Use repayment endpoint - creates income record

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDebtsByDebtor } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
+import { formatCurrency } from '../../utils/formatters';
 
 const DebtorList = styled.div`
 	display: flex;
@@ -106,13 +107,6 @@ const StatLabel = styled.span`
 	font-size: ${({ theme }) => theme.typography.sizes.xs};
 	color: ${({ theme }) => theme.colors.text.muted};
 `;
-
-function formatCurrency(amount) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-	}).format(Math.abs(amount));
-}
 
 export function DebtorSummary() {
 	const navigate = useNavigate();
