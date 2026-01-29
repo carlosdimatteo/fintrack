@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useBudgetHistory } from '../../hooks/useAPI';
-
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -229,6 +228,7 @@ export function BudgetHistory() {
 	const currentYear = new Date().getFullYear();
 	const [year, setYear] = useState(currentYear);
 	const [expandedMonth, setExpandedMonth] = useState(null);
+	const fmt = usePrivateFormatters();
 	
 	const { months, yearlyTotals, isLoading, error } = useBudgetHistory(year);
 	
@@ -273,25 +273,25 @@ export function BudgetHistory() {
 						<YearlyStat>
 							<YearlyStatLabel>Total Income</YearlyStatLabel>
 							<YearlyStatValue $color="#4ade80">
-								{formatCurrency(yearlyTotals.total_income)}
+								{fmt.currency(yearlyTotals.total_income)}
 							</YearlyStatValue>
 						</YearlyStat>
 						<YearlyStat>
 							<YearlyStatLabel>Total Expenses</YearlyStatLabel>
 							<YearlyStatValue $color="#f87171">
-								{formatCurrency(yearlyTotals.total_expenses)}
+								{fmt.currency(yearlyTotals.total_expenses)}
 							</YearlyStatValue>
 						</YearlyStat>
 						<YearlyStat>
 							<YearlyStatLabel>Total Budget</YearlyStatLabel>
 							<YearlyStatValue>
-								{formatCurrency(yearlyTotals.total_budget)}
+								{fmt.currency(yearlyTotals.total_budget)}
 							</YearlyStatValue>
 						</YearlyStat>
 						<YearlyStat>
 							<YearlyStatLabel>Budget Diff</YearlyStatLabel>
 							<YearlyStatValue $color={yearlyTotals.difference >= 0 ? '#4ade80' : '#f87171'}>
-								{yearlyTotals.difference >= 0 ? '+' : ''}{formatCurrency(yearlyTotals.difference)}
+								{yearlyTotals.difference >= 0 ? '+' : ''}{fmt.currency(yearlyTotals.difference)}
 							</YearlyStatValue>
 						</YearlyStat>
 					</YearlyStats>
@@ -305,9 +305,9 @@ export function BudgetHistory() {
 									<CategoryName>{cat.category_name}</CategoryName>
 									<CategoryValues>
 										<CategorySpent $over={cat.difference < 0}>
-											{formatCurrency(cat.total_spent)}
+											{fmt.currency(cat.total_spent)}
 										</CategorySpent>
-										<CategoryBudget>/ {formatCurrency(cat.yearly_budget)}</CategoryBudget>
+										<CategoryBudget>/ {fmt.currency(cat.yearly_budget)}</CategoryBudget>
 										<CategoryPercents>
 											<CategoryPercent $zero={cat.pct_of_expenses === 0}>
 												{cat.pct_of_expenses.toFixed(1)}% exp
@@ -334,7 +334,7 @@ export function BudgetHistory() {
 							<MonthHeader onClick={() => toggleMonth(monthData.month)}>
 								<MonthName>{MONTHS[monthData.month - 1]}</MonthName>
 								<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-									<MonthTotal>{formatCurrency(monthData.total_expenses)}</MonthTotal>
+									<MonthTotal>{fmt.currency(monthData.total_expenses)}</MonthTotal>
 									<ExpandIcon>{isExpanded ? '▼' : '▶'}</ExpandIcon>
 								</div>
 							</MonthHeader>
@@ -343,7 +343,7 @@ export function BudgetHistory() {
 								<MonthDetails>
 									<MonthIncomeRow>
 										<span>Income:</span>
-										<MonthIncome>{formatCurrency(monthData.total_income)}</MonthIncome>
+										<MonthIncome>{fmt.currency(monthData.total_income)}</MonthIncome>
 									</MonthIncomeRow>
 									{monthCategories
 										.sort((a, b) => b.spent - a.spent)
@@ -352,9 +352,9 @@ export function BudgetHistory() {
 												<CategoryName>{cat.category_name}</CategoryName>
 												<CategoryValues>
 													<CategorySpent $over={cat.difference < 0}>
-														{formatCurrency(cat.spent)}
+														{fmt.currency(cat.spent)}
 													</CategorySpent>
-													<CategoryBudget>/ {formatCurrency(cat.budget)}</CategoryBudget>
+													<CategoryBudget>/ {fmt.currency(cat.budget)}</CategoryBudget>
 													<CategoryPercents>
 														<CategoryPercent $zero={cat.pct_of_expenses === 0}>
 															{cat.pct_of_expenses.toFixed(1)}% exp

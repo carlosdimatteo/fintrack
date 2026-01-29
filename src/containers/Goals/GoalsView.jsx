@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -103,6 +103,8 @@ const NoGoals = styled.div`
 `;
 
 export function GoalsView({ goals, ytd, year }) {
+	const fmt = usePrivateFormatters();
+	
 	if (!goals) {
 		return (
 			<Container>
@@ -168,8 +170,8 @@ export function GoalsView({ goals, ytd, year }) {
 						/>
 					</ProgressBarOuter>
 					<GoalValues>
-						<GoalActual>{formatCurrency(savingsActual)}</GoalActual>
-						<GoalTarget>/ {formatCurrency(goals.savings_goal)}</GoalTarget>
+						<GoalActual>{fmt.currency(savingsActual)}</GoalActual>
+						<GoalTarget>/ {fmt.currency(goals.savings_goal)}</GoalTarget>
 					</GoalValues>
 				</GoalItem>
 			)}
@@ -194,8 +196,8 @@ export function GoalsView({ goals, ytd, year }) {
 						/>
 					</ProgressBarOuter>
 					<GoalValues>
-						<GoalActual>{formatCurrency(investmentActual)}</GoalActual>
-						<GoalTarget>/ {formatCurrency(goals.investment_goal)}</GoalTarget>
+						<GoalActual>{fmt.currency(investmentActual)}</GoalActual>
+						<GoalTarget>/ {fmt.currency(goals.investment_goal)}</GoalTarget>
 					</GoalValues>
 				</GoalItem>
 			)}
@@ -220,8 +222,8 @@ export function GoalsView({ goals, ytd, year }) {
 						/>
 					</ProgressBarOuter>
 					<GoalValues>
-						<GoalActual>{formatCurrency(investmentActual)}</GoalActual>
-						<GoalTarget>/ {formatCurrency(goals.ideal_investment)}</GoalTarget>
+						<GoalActual>{fmt.currency(investmentActual)}</GoalActual>
+						<GoalTarget>/ {fmt.currency(goals.ideal_investment)}</GoalTarget>
 					</GoalValues>
 				</GoalItem>
 			)}
@@ -231,14 +233,14 @@ export function GoalsView({ goals, ytd, year }) {
 					<ProjectedLabel>Projected Year-End (at current pace)</ProjectedLabel>
 					{goals.savings_goal > 0 && (
 						<ProjectedValue $positive={projectedSavings >= goals.savings_goal}>
-							Savings: {formatCurrency(projectedSavings)} 
-							{projectedSavings >= goals.savings_goal ? ' ✓' : ` (${formatCurrency(goals.savings_goal - projectedSavings)} short)`}
+							Savings: {fmt.currency(projectedSavings)} 
+							{projectedSavings >= goals.savings_goal ? ' ✓' : ` (${fmt.currency(goals.savings_goal - projectedSavings)} short)`}
 						</ProjectedValue>
 					)}
 					{goals.investment_goal > 0 && (
 						<ProjectedValue $positive={projectedInvestment >= goals.investment_goal}>
-							Investment: {formatCurrency(projectedInvestment)}
-							{projectedInvestment >= goals.investment_goal ? ' ✓' : ` (${formatCurrency(goals.investment_goal - projectedInvestment)} short)`}
+							Investment: {fmt.currency(projectedInvestment)}
+							{projectedInvestment >= goals.investment_goal ? ' ✓' : ` (${fmt.currency(goals.investment_goal - projectedInvestment)} short)`}
 						</ProjectedValue>
 					)}
 				</ProjectedSection>

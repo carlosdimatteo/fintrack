@@ -66,3 +66,32 @@ export function formatSignedCurrency(amount) {
 	const sign = amount >= 0 ? '+' : '';
 	return `${sign}${formatCurrency(amount)}`;
 }
+
+// Hidden placeholder for privacy mode
+export const HIDDEN_VALUE = '••••••';
+
+/**
+ * Get privacy-aware formatters
+ * @param {boolean} isHidden - Whether values should be hidden
+ * @returns {object} Object with formatter functions
+ */
+export function getPrivateFormatters(isHidden) {
+	if (isHidden) {
+		return {
+			currency: () => HIDDEN_VALUE,
+			signedCurrency: () => HIDDEN_VALUE,
+			// Percentages are NOT hidden
+			percent: formatPercent,
+			date: formatDate,
+			dateTime: formatDateTime,
+		};
+	}
+	
+	return {
+		currency: formatCurrency,
+		signedCurrency: formatSignedCurrency,
+		percent: formatPercent,
+		date: formatDate,
+		dateTime: formatDateTime,
+	};
+}

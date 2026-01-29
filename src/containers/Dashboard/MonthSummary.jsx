@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -86,6 +86,7 @@ const MONTHS = [
 ];
 
 export function MonthSummary({ data }) {
+	const fmt = usePrivateFormatters();
 	const monthName = MONTHS[data.month] || '';
 	const savingsPositive = data.savings >= 0;
 	
@@ -99,20 +100,20 @@ export function MonthSummary({ data }) {
 			<StatsGrid>
 				<StatItem>
 					<StatLabel>Income</StatLabel>
-					<StatValue>{formatCurrency(data.income)}</StatValue>
+					<StatValue>{fmt.currency(data.income)}</StatValue>
 				</StatItem>
 				<StatItem>
 					<StatLabel>Expenses</StatLabel>
-					<StatValue>{formatCurrency(data.expenses)}</StatValue>
+					<StatValue>{fmt.currency(data.expenses)}</StatValue>
 				</StatItem>
 				<StatItem>
 					<StatLabel>Invested</StatLabel>
-					<StatValue>{formatCurrency(data.investment_deposits)}</StatValue>
+					<StatValue>{fmt.currency(data.investment_deposits)}</StatValue>
 				</StatItem>
 				<StatItem>
 					<StatLabel>Savings</StatLabel>
 					<StatValue $color={savingsPositive ? '#4ade80' : '#f87171'}>
-						{formatCurrency(data.savings)}
+						{fmt.currency(data.savings)}
 					</StatValue>
 				</StatItem>
 			</StatsGrid>

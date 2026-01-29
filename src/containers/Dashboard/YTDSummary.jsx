@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -45,6 +45,7 @@ const StatValue = styled.span`
 `;
 
 export function YTDSummary({ data }) {
+	const fmt = usePrivateFormatters();
 	const savingsPositive = data.savings >= 0;
 	
 	return (
@@ -53,20 +54,20 @@ export function YTDSummary({ data }) {
 			<StatsGrid>
 				<StatCard>
 					<StatLabel>Income</StatLabel>
-					<StatValue>{formatCurrency(data.income)}</StatValue>
+					<StatValue>{fmt.currency(data.income)}</StatValue>
 				</StatCard>
 				<StatCard>
 					<StatLabel>Expenses</StatLabel>
-					<StatValue>{formatCurrency(data.expenses)}</StatValue>
+					<StatValue>{fmt.currency(data.expenses)}</StatValue>
 				</StatCard>
 				<StatCard>
 					<StatLabel>Invested</StatLabel>
-					<StatValue>{formatCurrency(data.investment_deposits)}</StatValue>
+					<StatValue>{fmt.currency(data.investment_deposits)}</StatValue>
 				</StatCard>
 				<StatCard>
 					<StatLabel>Savings</StatLabel>
 					<StatValue $color={savingsPositive ? '#4ade80' : '#f87171'}>
-						{formatCurrency(data.savings)}
+						{fmt.currency(data.savings)}
 					</StatValue>
 				</StatCard>
 			</StatsGrid>

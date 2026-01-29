@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDebtsByDebtor } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const DebtorList = styled.div`
 	display: flex;
@@ -110,6 +110,7 @@ const StatLabel = styled.span`
 
 export function DebtorSummary() {
 	const navigate = useNavigate();
+	const fmt = usePrivateFormatters();
 	const { debtors, isLoading, error } = useDebtsByDebtor();
 	
 	if (isLoading) {
@@ -145,11 +146,11 @@ export function DebtorSummary() {
 		<>
 			<SummaryCard>
 				<SummaryStat>
-					<StatValue $color="#4ade80">{formatCurrency(totalOwedToYou)}</StatValue>
+					<StatValue $color="#4ade80">{fmt.currency(totalOwedToYou)}</StatValue>
 					<StatLabel>Owed to you</StatLabel>
 				</SummaryStat>
 				<SummaryStat>
-					<StatValue $color="#f87171">{formatCurrency(totalYouOwe)}</StatValue>
+					<StatValue $color="#f87171">{fmt.currency(totalYouOwe)}</StatValue>
 					<StatLabel>You owe</StatLabel>
 				</SummaryStat>
 			</SummaryCard>
@@ -168,7 +169,7 @@ export function DebtorSummary() {
 						</DebtorInfo>
 						<NetOwed>
 							<Amount $positive={debtor.net_owed > 0}>
-								{formatCurrency(debtor.net_owed)}
+								{fmt.currency(debtor.net_owed)}
 							</Amount>
 							<OwedLabel>
 								{debtor.net_owed > 0 ? 'owes you' : debtor.net_owed < 0 ? 'you owe' : 'settled'}

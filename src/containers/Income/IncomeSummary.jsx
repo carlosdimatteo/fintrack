@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useIncomeSummary } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const SummaryContainer = styled.div`
 	display: flex;
@@ -117,6 +117,7 @@ export function IncomeSummary() {
 	const currentYear = new Date().getFullYear();
 	const currentMonth = new Date().getMonth() + 1;
 	const [year, setYear] = useState(currentYear);
+	const fmt = usePrivateFormatters();
 	
 	const { summary, total, isLoading, error } = useIncomeSummary(year);
 	
@@ -151,7 +152,7 @@ export function IncomeSummary() {
 			
 			<TotalCard>
 				<TotalLabel>Total Income {year}</TotalLabel>
-				<TotalValue>{formatCurrency(total)}</TotalValue>
+				<TotalValue>{fmt.currency(total)}</TotalValue>
 			</TotalCard>
 			
 			<Card>
@@ -171,7 +172,7 @@ export function IncomeSummary() {
 										{isCurrent && ' •'}
 									</MonthName>
 									<MonthAmount $hasIncome={monthTotal > 0}>
-										{monthTotal > 0 ? formatCurrency(monthTotal) : '—'}
+										{monthTotal > 0 ? fmt.currency(monthTotal) : '—'}
 									</MonthAmount>
 								</MonthRow>
 							);

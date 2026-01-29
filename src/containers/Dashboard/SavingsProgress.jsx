@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -116,6 +116,8 @@ const NoData = styled.div`
 `;
 
 export function SavingsProgress({ data, goals }) {
+	const fmt = usePrivateFormatters();
+	
 	if (!data) {
 		return (
 			<Container>
@@ -137,22 +139,22 @@ export function SavingsProgress({ data, goals }) {
 				<SectionTitle>Net Worth Calculations</SectionTitle>
 				<NetWorthRow>
 					<NetWorthLabel>Real Net Worth</NetWorthLabel>
-					<NetWorthValue>{formatCurrency(data.current_net_worth)}</NetWorthValue>
+					<NetWorthValue>{fmt.currency(data.current_net_worth)}</NetWorthValue>
 				</NetWorthRow>
 				<NetWorthRow>
 					<NetWorthLabel>Without Broker PnL</NetWorthLabel>
-					<NetWorthValue>{formatCurrency(data.current_without_broker_winnings)}</NetWorthValue>
+					<NetWorthValue>{fmt.currency(data.current_without_broker_winnings)}</NetWorthValue>
 				</NetWorthRow>
 				<NetWorthRow>
 					<NetWorthLabel>Without Any PnL</NetWorthLabel>
-					<NetWorthValue>{formatCurrency(data.current_without_winnings)}</NetWorthValue>
+					<NetWorthValue>{fmt.currency(data.current_without_winnings)}</NetWorthValue>
 				</NetWorthRow>
 			</Section>
 			
 			{/* Savings Goal Progress */}
 			{hasGoal && (
 				<Section>
-					<SectionTitle>Goal Progress ({formatCurrency(savingsGoal)})</SectionTitle>
+					<SectionTitle>Goal Progress ({fmt.currency(savingsGoal)})</SectionTitle>
 					
 					{/* Real savings */}
 					<GoalItem>
@@ -169,9 +171,9 @@ export function SavingsProgress({ data, goals }) {
 							/>
 						</ProgressBarOuter>
 						<GoalValues>
-							<GoalAmount>Saved: {formatCurrency(data.saved_this_year)}</GoalAmount>
+							<GoalAmount>Saved: {fmt.currency(data.saved_this_year)}</GoalAmount>
 							<GoalRemaining $complete={data.remaining <= 0}>
-								{data.remaining > 0 ? `${formatCurrency(data.remaining)} to go` : 'Goal reached!'}
+								{data.remaining > 0 ? `${fmt.currency(data.remaining)} to go` : 'Goal reached!'}
 							</GoalRemaining>
 						</GoalValues>
 					</GoalItem>
@@ -191,9 +193,9 @@ export function SavingsProgress({ data, goals }) {
 							/>
 						</ProgressBarOuter>
 						<GoalValues>
-							<GoalAmount>Saved: {formatCurrency(data.saved_without_broker_winnings)}</GoalAmount>
+							<GoalAmount>Saved: {fmt.currency(data.saved_without_broker_winnings)}</GoalAmount>
 							<GoalRemaining $complete={data.remaining_without_broker <= 0}>
-								{data.remaining_without_broker > 0 ? `${formatCurrency(data.remaining_without_broker)} to go` : 'Goal reached!'}
+								{data.remaining_without_broker > 0 ? `${fmt.currency(data.remaining_without_broker)} to go` : 'Goal reached!'}
 							</GoalRemaining>
 						</GoalValues>
 					</GoalItem>
@@ -213,9 +215,9 @@ export function SavingsProgress({ data, goals }) {
 							/>
 						</ProgressBarOuter>
 						<GoalValues>
-							<GoalAmount>Saved: {formatCurrency(data.saved_without_winnings)}</GoalAmount>
+							<GoalAmount>Saved: {fmt.currency(data.saved_without_winnings)}</GoalAmount>
 							<GoalRemaining $complete={data.remaining_without_winnings <= 0}>
-								{data.remaining_without_winnings > 0 ? `${formatCurrency(data.remaining_without_winnings)} to go` : 'Goal reached!'}
+								{data.remaining_without_winnings > 0 ? `${fmt.currency(data.remaining_without_winnings)} to go` : 'Goal reached!'}
 							</GoalRemaining>
 						</GoalValues>
 					</GoalItem>

@@ -3,7 +3,8 @@ import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
 import { useState, useEffect } from 'react';
 import { useExpenseList } from '../../hooks/useAPI';
-import { formatCurrency, formatDateTime } from '../../utils/formatters';
+import { formatDateTime } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -103,6 +104,7 @@ export function ExpenseHistory() {
 	const [offset, setOffset] = useState(0);
 	const [total, setTotal] = useState(0);
 	const limit = 20;
+	const fmt = usePrivateFormatters();
 	
 	const { expenses, count, isLoading, isFetching, error } = useExpenseList(limit, offset);
 	
@@ -162,7 +164,7 @@ export function ExpenseHistory() {
 							</ExpenseMeta>
 						</ExpenseInfo>
 						<ExpenseAmount>
-							<Amount>{formatCurrency(expense.expense)}</Amount>
+							<Amount>{fmt.currency(expense.expense)}</Amount>
 							{expense.originalAmount && expense.originalAmount !== expense.expense && (
 								<OriginalAmount>
 									{expense.originalAmount.toLocaleString()} COP

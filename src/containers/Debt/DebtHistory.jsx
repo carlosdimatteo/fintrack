@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDebtHistory, useDebtsByDebtor } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatDate } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const BackButton = styled.button`
 	background: transparent;
@@ -132,6 +133,7 @@ const EmptyState = styled.div`
 export function DebtHistory() {
 	const { debtorId } = useParams();
 	const navigate = useNavigate();
+	const fmt = usePrivateFormatters();
 	
 	const { debts, isLoading, error } = useDebtHistory(debtorId);
 	const { debtors } = useDebtsByDebtor();
@@ -158,7 +160,7 @@ export function DebtHistory() {
 					<DebtorName>{debtorInfo.debtor_name}</DebtorName>
 					<NetBalance>
 						<BalanceAmount $positive={debtorInfo.net_owed > 0}>
-							{formatCurrency(debtorInfo.net_owed)}
+							{fmt.currency(debtorInfo.net_owed)}
 						</BalanceAmount>
 						<BalanceLabel>
 							{debtorInfo.net_owed > 0 ? 'owes you' : debtorInfo.net_owed < 0 ? 'you owe' : 'settled'}
@@ -190,7 +192,7 @@ export function DebtHistory() {
 									<TransactionDate>{formatDate(debt.date)}</TransactionDate>
 								</TransactionInfo>
 								<TransactionAmount $outbound={debt.outbound}>
-									{debt.outbound ? '+' : '-'}{formatCurrency(debt.amount)}
+									{debt.outbound ? '+' : '-'}{fmt.currency(debt.amount)}
 								</TransactionAmount>
 							</TransactionItem>
 						))}

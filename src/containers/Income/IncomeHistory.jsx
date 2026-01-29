@@ -4,7 +4,8 @@ import { useIncomeList } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency, formatDateTime } from '../../utils/formatters';
+import { formatDateTime } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -74,6 +75,7 @@ export function IncomeHistory() {
 	const [offset, setOffset] = useState(0);
 	const [allIncomes, setAllIncomes] = useState([]);
 	const [total, setTotal] = useState(0);
+	const fmt = usePrivateFormatters();
 	
 	const { incomes, count, isLoading, isFetching, error } = useIncomeList(PAGE_SIZE, offset);
 	
@@ -131,7 +133,7 @@ export function IncomeHistory() {
 								{formatDateTime(income.date)}
 							</IncomeMeta>
 						</IncomeInfo>
-						<Amount>+{formatCurrency(income.amount)}</Amount>
+						<Amount>+{fmt.currency(income.amount)}</Amount>
 					</IncomeItem>
 				))}
 			</HistoryList>

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { formatCurrency, formatPercent } from '../../utils/formatters';
+import { formatPercent } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -134,6 +135,7 @@ const InvestmentPnL = styled.span`
 
 export function InvestmentMini({ investments, isHistorical = false }) {
 	const navigate = useNavigate();
+	const fmt = usePrivateFormatters();
 	
 	// Calculate total PnL
 	const totalPnL = investments.reduce((sum, inv) => sum + (inv.pnl || 0), 0);
@@ -161,7 +163,7 @@ export function InvestmentMini({ investments, isHistorical = false }) {
 			<TotalPnL $positive={totalPnLPositive}>
 				<TotalLabel>Total PnL</TotalLabel>
 				<TotalValue $positive={totalPnLPositive}>
-					{totalPnLPositive ? '+' : ''}{formatCurrency(totalPnL)} ({formatPercent(totalPnLPercent)})
+					{fmt.signedCurrency(totalPnL)} ({formatPercent(totalPnLPercent)})
 				</TotalValue>
 			</TotalPnL>
 			
@@ -173,13 +175,13 @@ export function InvestmentMini({ investments, isHistorical = false }) {
 							<InvestmentInfo>
 								<InvestmentName>{inv.name}</InvestmentName>
 								<InvestmentMeta>
-									{inv.type} • Capital: {formatCurrency(inv.total_capital || 0)}
+									{inv.type} • Capital: {fmt.currency(inv.total_capital || 0)}
 								</InvestmentMeta>
 							</InvestmentInfo>
 							<InvestmentStats>
-								<InvestmentBalance>{formatCurrency(inv.real_balance || 0)}</InvestmentBalance>
+								<InvestmentBalance>{fmt.currency(inv.real_balance || 0)}</InvestmentBalance>
 								<InvestmentPnL $positive={pnlPositive}>
-									{pnlPositive ? '+' : ''}{formatCurrency(inv.pnl || 0)} ({formatPercent(inv.pnl_percent || 0)})
+									{fmt.signedCurrency(inv.pnl || 0)} ({formatPercent(inv.pnl_percent || 0)})
 								</InvestmentPnL>
 							</InvestmentStats>
 						</InvestmentItem>

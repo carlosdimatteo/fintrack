@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { formatCurrency, formatPercent } from '../../utils/formatters';
+import { formatPercent } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -143,6 +144,8 @@ const DiscrepancyValue = styled.span`
 `;
 
 export function NetWorthCard({ data }) {
+	const fmt = usePrivateFormatters();
+	
 	const discrepancy = Math.abs(data.fiat_discrepancy || 0);
 	const hasDiscrepancy = discrepancy > 50;
 	const severeDiscrepancy = discrepancy > 500;
@@ -160,9 +163,9 @@ export function NetWorthCard({ data }) {
 		<Container>
 			<Header>
 				<Title>Net Worth</Title>
-				<TotalValue>{formatCurrency(data.total_real_net_worth)}</TotalValue>
+				<TotalValue>{fmt.currency(data.total_real_net_worth)}</TotalValue>
 				<TotalPnL $positive={totalPnLPositive}>
-					Total PnL: {totalPnLPositive ? '+' : ''}{formatCurrency(totalPnL)}
+					Total PnL: {fmt.signedCurrency(totalPnL)}
 				</TotalPnL>
 			</Header>
 			
@@ -174,7 +177,7 @@ export function NetWorthCard({ data }) {
 							<ColorDot $color="#4ade80" />
 							Fiat ({(data.fiat_percent || 0).toFixed(1)}%)
 						</BreakdownLabel>
-						<BreakdownValue>{formatCurrency(data.total_fiat_balance)}</BreakdownValue>
+						<BreakdownValue>{fmt.currency(data.total_fiat_balance)}</BreakdownValue>
 					</BreakdownItem>
 					<BreakdownItem>
 						<BreakdownLabel>
@@ -182,9 +185,9 @@ export function NetWorthCard({ data }) {
 							Crypto ({(data.crypto_percent || 0).toFixed(1)}%)
 						</BreakdownLabel>
 						<BreakdownValues>
-							<BreakdownValue>{formatCurrency(data.crypto_balance)}</BreakdownValue>
+							<BreakdownValue>{fmt.currency(data.crypto_balance)}</BreakdownValue>
 							<BreakdownPnL $positive={cryptoPnL >= 0}>
-								{cryptoPnL >= 0 ? '+' : ''}{formatCurrency(cryptoPnL)} ({formatPercent(cryptoPnLPercent)})
+								{fmt.signedCurrency(cryptoPnL)} ({formatPercent(cryptoPnLPercent)})
 							</BreakdownPnL>
 						</BreakdownValues>
 					</BreakdownItem>
@@ -194,9 +197,9 @@ export function NetWorthCard({ data }) {
 							Broker ({(data.broker_percent || 0).toFixed(1)}%)
 						</BreakdownLabel>
 						<BreakdownValues>
-							<BreakdownValue>{formatCurrency(data.broker_balance)}</BreakdownValue>
+							<BreakdownValue>{fmt.currency(data.broker_balance)}</BreakdownValue>
 							<BreakdownPnL $positive={brokerPnL >= 0}>
-								{brokerPnL >= 0 ? '+' : ''}{formatCurrency(brokerPnL)} ({formatPercent(brokerPnLPercent)})
+								{fmt.signedCurrency(brokerPnL)} ({formatPercent(brokerPnLPercent)})
 							</BreakdownPnL>
 						</BreakdownValues>
 					</BreakdownItem>
@@ -208,19 +211,19 @@ export function NetWorthCard({ data }) {
 				<ExpectedVsReal>
 					<CompareRow>
 						<CompareLabel>Expected Fiat</CompareLabel>
-						<CompareValue>{formatCurrency(data.expected_fiat_balance)}</CompareValue>
+						<CompareValue>{fmt.currency(data.expected_fiat_balance)}</CompareValue>
 					</CompareRow>
 					<CompareRow>
 						<CompareLabel>Real Fiat</CompareLabel>
-						<CompareValue $color="#4ade80">{formatCurrency(data.total_fiat_balance)}</CompareValue>
+						<CompareValue $color="#4ade80">{fmt.currency(data.total_fiat_balance)}</CompareValue>
 					</CompareRow>
 					<CompareRow>
 						<CompareLabel>Expected Net Worth</CompareLabel>
-						<CompareValue>{formatCurrency(data.expected_net_worth)}</CompareValue>
+						<CompareValue>{fmt.currency(data.expected_net_worth)}</CompareValue>
 					</CompareRow>
 					<CompareRow>
 						<CompareLabel>Real Net Worth</CompareLabel>
-						<CompareValue $color="#4ade80">{formatCurrency(data.total_real_net_worth)}</CompareValue>
+						<CompareValue $color="#4ade80">{fmt.currency(data.total_real_net_worth)}</CompareValue>
 					</CompareRow>
 				</ExpectedVsReal>
 			</Section>
@@ -231,7 +234,7 @@ export function NetWorthCard({ data }) {
 						{severeDiscrepancy ? 'Large discrepancy!' : 'Balance discrepancy'}
 					</DiscrepancyLabel>
 					<DiscrepancyValue $severe={severeDiscrepancy}>
-						{formatCurrency(data.fiat_discrepancy)}
+						{fmt.currency(data.fiat_discrepancy)}
 					</DiscrepancyValue>
 				</DiscrepancyAlert>
 			)}

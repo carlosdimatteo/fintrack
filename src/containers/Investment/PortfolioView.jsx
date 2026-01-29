@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { useInvestmentSummary } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency, formatPercent } from '../../utils/formatters';
+import { formatPercent } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const PortfolioContainer = styled.div`
 	display: flex;
@@ -107,6 +108,7 @@ const EmptyState = styled.div`
 `;
 
 export function PortfolioView() {
+	const fmt = usePrivateFormatters();
 	const { accounts, isLoading, error } = useInvestmentSummary();
 	
 	if (isLoading) {
@@ -135,9 +137,9 @@ export function PortfolioView() {
 		<PortfolioContainer>
 			<TotalCard>
 				<TotalLabel>Total Portfolio Value</TotalLabel>
-				<TotalValue>{formatCurrency(totalBalance)}</TotalValue>
+				<TotalValue>{fmt.currency(totalBalance)}</TotalValue>
 				<TotalPnL $positive={totalPnL >= 0}>
-					{totalPnL >= 0 ? '+' : ''}{formatCurrency(totalPnL)} ({formatPercent(totalPnLPercent)})
+					{totalPnL >= 0 ? '+' : ''}{fmt.currency(totalPnL)} ({formatPercent(totalPnLPercent)})
 				</TotalPnL>
 			</TotalCard>
 			
@@ -149,11 +151,11 @@ export function PortfolioView() {
 							<AccountType>{account.type}</AccountType>
 						</AccountInfo>
 						<AccountStats>
-							<AccountBalance>{formatCurrency(account.real_balance || 0)}</AccountBalance>
+							<AccountBalance>{fmt.currency(account.real_balance || 0)}</AccountBalance>
 							<AccountPnL $positive={(account.pnl || 0) >= 0}>
-								{(account.pnl || 0) >= 0 ? '+' : ''}{formatCurrency(account.pnl || 0)} ({formatPercent(account.pnl_percent || 0)})
+								{(account.pnl || 0) >= 0 ? '+' : ''}{fmt.currency(account.pnl || 0)} ({formatPercent(account.pnl_percent || 0)})
 							</AccountPnL>
-							<AccountCapital>Capital: {formatCurrency(account.total_capital || 0)}</AccountCapital>
+							<AccountCapital>Capital: {fmt.currency(account.total_capital || 0)}</AccountCapital>
 						</AccountStats>
 					</AccountCard>
 				))}

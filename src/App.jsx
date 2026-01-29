@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import theme from './theme';
 import { ToastProvider } from './components/Toast';
+import { PrivacyProvider } from './context/PrivacyContext';
 
 function App() {
 	const [queryClient] = useState(() => new QueryClient());
@@ -12,9 +13,11 @@ function App() {
 		<QueryClientProvider client={queryClient}>
 			<div className="App">
 				<ThemeProvider theme={theme}>
-					<ToastProvider>
-						<Main />
-					</ToastProvider>
+					<PrivacyProvider>
+						<ToastProvider>
+							<Main />
+						</ToastProvider>
+					</PrivacyProvider>
 				</ThemeProvider>
 			</div>
 		</QueryClientProvider>

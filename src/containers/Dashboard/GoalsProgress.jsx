@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { formatCurrency } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const Container = styled.div`
 	display: flex;
@@ -74,6 +74,8 @@ const NoGoals = styled.div`
 `;
 
 export function GoalsProgress({ goals, ytd }) {
+	const fmt = usePrivateFormatters();
+	
 	const idealInvestmentProgress = goals?.ideal_investment 
 		? ((ytd?.investment_deposits || 0) / goals.ideal_investment) * 100 
 		: 0;
@@ -109,7 +111,7 @@ export function GoalsProgress({ goals, ytd }) {
 							</GoalPercent>
 						</GoalLabel>
 						<GoalValues>
-							{formatCurrency(ytd?.savings || 0)} / {formatCurrency(goals.savings_goal)}
+							{fmt.currency(ytd?.savings || 0)} / {fmt.currency(goals.savings_goal)}
 						</GoalValues>
 					</GoalHeader>
 					<ProgressBarOuter>
@@ -131,7 +133,7 @@ export function GoalsProgress({ goals, ytd }) {
 							</GoalPercent>
 						</GoalLabel>
 						<GoalValues>
-							{formatCurrency(ytd?.investment_deposits || 0)} / {formatCurrency(goals.investment_goal)}
+							{fmt.currency(ytd?.investment_deposits || 0)} / {fmt.currency(goals.investment_goal)}
 						</GoalValues>
 					</GoalHeader>
 					<ProgressBarOuter>
@@ -153,7 +155,7 @@ export function GoalsProgress({ goals, ytd }) {
 							</GoalPercent>
 						</GoalLabel>
 						<GoalValues>
-							{formatCurrency(ytd?.investment_deposits || 0)} / {formatCurrency(goals.ideal_investment)}
+							{fmt.currency(ytd?.investment_deposits || 0)} / {fmt.currency(goals.ideal_investment)}
 						</GoalValues>
 					</GoalHeader>
 					<ProgressBarOuter>

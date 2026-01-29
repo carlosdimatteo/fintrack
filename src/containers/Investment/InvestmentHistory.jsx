@@ -4,7 +4,8 @@ import { useInvestmentTransactions } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatDate } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -93,6 +94,7 @@ export function InvestmentHistory() {
 	const [offset, setOffset] = useState(0);
 	const [allTransactions, setAllTransactions] = useState([]);
 	const [total, setTotal] = useState(0);
+	const fmt = usePrivateFormatters();
 	
 	const { transactions, count, isLoading, isFetching, error } = useInvestmentTransactions(PAGE_SIZE, offset);
 	
@@ -156,7 +158,7 @@ export function InvestmentHistory() {
 								<TransactionDate>{formatDate(tx.date)}</TransactionDate>
 							</TransactionInfo>
 							<TransactionAmount $isDeposit={isDeposit}>
-								{isDeposit ? '+' : '-'}{formatCurrency(tx.amount)}
+								{isDeposit ? '+' : '-'}{fmt.currency(tx.amount)}
 							</TransactionAmount>
 						</TransactionItem>
 					);

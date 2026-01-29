@@ -4,7 +4,8 @@ import { useTransfers } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingText } from '../../components/Layout';
-import { formatCurrency, formatDate } from '../../utils/formatters';
+import { formatDate } from '../../utils/formatters';
+import { usePrivateFormatters } from '../../hooks/usePrivateFormatters';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -96,6 +97,7 @@ export function TransferHistory() {
 	const [offset, setOffset] = useState(0);
 	const [allTransfers, setAllTransfers] = useState([]);
 	const [total, setTotal] = useState(0);
+	const fmt = usePrivateFormatters();
 	
 	const { transfers, count, isLoading, isFetching, error } = useTransfers(PAGE_SIZE, offset);
 	
@@ -162,11 +164,11 @@ export function TransferHistory() {
 								<TransferDate>{formatDate(transfer.date)}</TransferDate>
 							</TransferInfo>
 							<TransferAmounts>
-								<Amount>{formatCurrency(transfer.source_amount)}</Amount>
+								<Amount>{fmt.currency(transfer.source_amount)}</Amount>
 								{hasDifferentAmounts && (
 									<>
 										<Amount style={{ fontSize: '13px', opacity: 0.8 }}>
-											→ {formatCurrency(transfer.dest_amount)}
+											→ {fmt.currency(transfer.dest_amount)}
 										</Amount>
 										<ExchangeRate>Rate: {exchangeRate}</ExchangeRate>
 									</>
