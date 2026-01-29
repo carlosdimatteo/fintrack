@@ -2,10 +2,7 @@ import styled from 'styled-components';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import Axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { useExpenseList } from '../../hooks/useAPI';
 
 const HistoryList = styled.div`
 	display: flex;
@@ -117,32 +114,25 @@ export function ExpenseHistory() {
 	const [total, setTotal] = useState(0);
 	const limit = 20;
 	
-	const { data, isLoading, error, isFetching } = useQuery({
-		queryKey: ['expenses', limit, offset],
-		queryFn: async () => {
-			const res = await Axios.get(`${API_URL}/expenses?limit=${limit}&offset=${offset}`);
-			return res.data;
-		},
-		staleTime: 20 * 1000,
-	});
+	const { expenses, count, isLoading, isFetching, error } = useExpenseList(limit, offset);
 	
 	// Accumulate expenses when new data arrives
 	useEffect(() => {
-		if (data?.expenses) {
+		if (expenses.length > 0) {
 			if (offset === 0) {
-				// First page - replace all
-				setAllExpenses(data.expenses);
+				setAllExpenses(expenses);
 			} else {
-				// Additional pages - append (avoid duplicates)
 				setAllExpenses((prev) => {
 					const existingIds = new Set(prev.map(e => e.id));
-					const newExpenses = data.expenses.filter(e => !existingIds.has(e.id));
+					const newExpenses = expenses.filter(e => !existingIds.has(e.id));
 					return [...prev, ...newExpenses];
 				});
 			}
-			setTotal(data.count);
 		}
-	}, [data, offset]);
+		if (count > 0) {
+			setTotal(count);
+		}
+	}, [expenses, count, offset]);
 	
 	const hasMore = allExpenses.length < total;
 	

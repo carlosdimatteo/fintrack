@@ -157,7 +157,7 @@ async function getRecentExpenses(limit = 10) {
 }
 
 export function useExpenseList(limit = 20, offset = 0, options = {}) {
-	const { data, isLoading, error, refetch } = useQuery({
+	const { data, isLoading, isFetching, error, refetch } = useQuery({
 		...options,
 		staleTime: DEFAULT_STALE_TIME,
 		queryKey: ['expenses', limit, offset],
@@ -165,8 +165,9 @@ export function useExpenseList(limit = 20, offset = 0, options = {}) {
 	});
 	return {
 		expenses: data?.expenses ?? [],
-		total: data?.total ?? 0,
+		count: data?.count ?? 0,
 		isLoading,
+		isFetching,
 		error,
 		refetch,
 	};
