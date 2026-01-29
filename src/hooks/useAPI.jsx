@@ -1,7 +1,8 @@
 import Axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
-export const API_URL = process.env.REACT_APP_API_URL;
+// Use env variable if set, otherwise use /api (works with proxy in dev)
+export const API_URL = process.env.REACT_APP_API_URL || '/api';
 const DEFAULT_STALE_TIME = 20 * 1000;
 
 async function submitIncome(income) {
@@ -198,7 +199,7 @@ async function getDebtors() {
 }
 
 async function createDebtor(data) {
-	const res = await Axios.post(`${API_URL}/debtor`, data);
+	const res = await Axios.post(`${API_URL}/debtors`, data);
 	return res.data;
 }
 
@@ -253,5 +254,167 @@ export function useSubmitExpenseWithDebt(options = {}) {
 		submitExpenseWithDebt: mutate,
 		mutate,
 		reset,
+	};
+}
+
+// GET /api/debts/by-debtor - Summary per debtor
+async function getDebtsByDebtor() {
+	const res = await Axios.get(`${API_URL}/debts/by-debtor`);
+	return res.data;
+}
+
+export function useDebtsByDebtor(options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['debtsByDebtor'],
+		queryFn: getDebtsByDebtor,
+	});
+	return {
+		debtors: data ?? [],
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+// GET /api/debts?debtor_id=X - History with specific debtor
+async function getDebtHistory(debtorId) {
+	const res = await Axios.get(`${API_URL}/debts?debtor_id=${debtorId}`);
+	return res.data;
+}
+
+export function useDebtHistory(debtorId, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['debtHistory', debtorId],
+		queryFn: () => getDebtHistory(debtorId),
+		enabled: !!debtorId,
+	});
+	return {
+		debts: data?.debts ?? [],
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+// POST /api/debt - Standalone debt
+async function createDebt(data) {
+	const res = await Axios.post(`${API_URL}/debt`, data);
+	return res.data;
+}
+
+export function useCreateDebt(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: createDebt,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		createDebt: mutate,
+		mutate,
+		reset,
+	};
+}
+
+// POST /api/debt/repayment - Record repayment
+async function createRepayment(data) {
+	const res = await Axios.post(`${API_URL}/debt/repayment`, data);
+	return res.data;
+}
+
+export function useDebtRepayment(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: createRepayment,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		createRepayment: mutate,
+		mutate,
+		reset,
+	};
+}
+
+// ============================================
+// Investment Hooks
+// ============================================
+
+// POST /api/investment - Create deposit or withdrawal
+async function createInvestment(data) {
+	const res = await Axios.post(`${API_URL}/investment`, data);
+	return res.data;
+}
+
+export function useCreateInvestment(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: createInvestment,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		createInvestment: mutate,
+		mutate,
+		reset,
+	};
+}
+
+// GET /api/investments - Transaction history with pagination
+async function getInvestmentTransactions(limit, offset) {
+	const res = await Axios.get(`${API_URL}/investments`, {
+		params: { limit, offset },
+	});
+	return res.data;
+}
+
+export function useInvestmentTransactions(limit = 20, offset = 0, options = {}) {
+	const { data, isLoading, isFetching, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['investmentTransactions', limit, offset],
+		queryFn: () => getInvestmentTransactions(limit, offset),
+	});
+	return {
+		transactions: data?.investments ?? [],
+		count: data?.count ?? 0,
+		isLoading,
+		isFetching,
+		error,
+		refetch,
+	};
+}
+
+// GET /api/investment-accounts/summary - Portfolio with PnL
+async function getInvestmentSummary() {
+	const res = await Axios.get(`${API_URL}/investment-accounts/summary`);
+	return res.data;
+}
+
+export function useInvestmentSummary(options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['investmentSummary'],
+		queryFn: getInvestmentSummary,
+	});
+	return {
+		accounts: data ?? [],
+		isLoading,
+		error,
+		refetch,
 	};
 }
