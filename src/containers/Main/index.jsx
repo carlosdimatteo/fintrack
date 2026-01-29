@@ -17,6 +17,7 @@ export function Main() {
 						<Route path="/expenses/*" element={<Expenses />} />
 						<Route path="/budget" element={<Budget />} />
 						<Route path="/income" element={<Income />} />
+						<Route path="/debts/*" element={<Debt />} />
 						<Route path="/accounting" element={<Accounting />} />
 						<Route path="/showcase" element={<Showcase />} />
 					</Routes>
