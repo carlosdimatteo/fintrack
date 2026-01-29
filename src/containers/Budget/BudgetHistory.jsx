@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { useBudgetHistory } from '../../hooks/useAPI';
-import { Card } from '../../components/Card';
+
 import { LoadingText } from '../../components/Layout';
 import { formatCurrency } from '../../utils/formatters';
 
