@@ -8,6 +8,7 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
+import { InfoTip } from '../../components/InfoTip';
 import {
 	useAllAccounts,
 	useCategories,
@@ -189,6 +190,28 @@ const SmallButton = styled.button`
 			background: rgba(255, 255, 255, 0.12);
 		}
 	`}
+`;
+
+const SplitSummary = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 12px;
+	background: rgba(74, 222, 128, 0.1);
+	border: 1px solid rgba(74, 222, 128, 0.2);
+	border-radius: 8px;
+	margin-top: 8px;
+`;
+
+const SplitLabel = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.sm};
+	color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const SplitValue = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.base};
+	font-weight: ${({ theme }) => theme.typography.weights.semibold};
+	color: #4ade80;
 `;
 
 export function ExpenseForm({ onSuccess }) {
@@ -411,6 +434,12 @@ export function ExpenseForm({ onSuccess }) {
 						/>
 					</FormField>
 					
+					{account?.type === 'investment_account' && (
+						<InfoTip>
+							Paying from an investment account will reduce its capital, not your fiat balance.
+						</InfoTip>
+					)}
+					
 					{/* Debt Split Section */}
 					<SplitToggle onClick={() => setSplitEnabled(!splitEnabled)}>
 						<ToggleSwitch $active={splitEnabled} />
@@ -482,6 +511,16 @@ export function ExpenseForm({ onSuccess }) {
 								<AddDebtorButton type="button" onClick={() => setShowNewDebtorInput(true)}>
 									+ Create new debtor
 								</AddDebtorButton>
+							)}
+							
+							{/* Show actual cost summary */}
+							{expense && debts.some(d => d.amount) && (
+								<SplitSummary>
+									<SplitLabel>Your actual cost</SplitLabel>
+									<SplitValue>
+										${(Number(expense) - debts.reduce((sum, d) => sum + (Number(d.amount) || 0), 0)).toFixed(2)}
+									</SplitValue>
+								</SplitSummary>
 							)}
 						</DebtSection>
 					)}

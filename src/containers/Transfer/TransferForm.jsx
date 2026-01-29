@@ -8,6 +8,7 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
+import { InfoTip } from '../../components/InfoTip';
 import { useAllAccounts, useCreateTransfer } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
@@ -143,6 +144,10 @@ export function TransferForm({ onSuccess }) {
 		<Card>
 			<Form onSubmit={(e) => e.preventDefault()}>
 				<FormStack>
+					<InfoTip>
+						Transfers move money between your fiat accounts. Your total net worth stays the same.
+					</InfoTip>
+					
 					<FormField>
 						<FieldLabel>From Account</FieldLabel>
 						<SelectComp

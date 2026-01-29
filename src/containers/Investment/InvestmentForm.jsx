@@ -8,6 +8,7 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
+import { InfoTip } from '../../components/InfoTip';
 import { useAllAccounts, useCreateInvestment } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
@@ -150,6 +151,12 @@ export function InvestmentForm({ onSuccess }) {
 							</TypeButton>
 						</TypeToggle>
 					</FormField>
+					
+					<InfoTip>
+						{type === 'deposit' 
+							? 'This will decrease your fiat account balance and increase your investment capital.'
+							: 'This will increase your fiat account balance and decrease your investment capital.'}
+					</InfoTip>
 					
 					<FormField>
 						<FieldLabel>
