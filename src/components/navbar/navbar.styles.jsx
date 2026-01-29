@@ -2,38 +2,43 @@ import styled from 'styled-components';
 
 export const NavContainer = styled.div`
 	display: flex;
-	background: ${({ theme: { gradient } }) => gradient.main.background};
-	border-radius: 8px;
-	border-radius: 5px;
-	max-width: 50rem;
-	justify-content: space-between;
+	background: ${({ theme }) => theme.colors.card.interior};
+	border-top: 1px solid rgba(120, 180, 180, 0.1);
+	justify-content: space-around;
 	box-sizing: border-box;
-	gap: 4px;
-	width: max-content;
-	max-width: 100%;
-	position: sticky;
-
-	scrollbar-color: gray transparent;
+	width: 100%;
 	align-items: center;
-	height: 4rem;
-	@media screen and (max-width: 758px) {
-		overflow-x: scroll;
-		width: 100vw !important;
-	}
+	height: 60px;
+	padding: 0 4px;
+	flex-shrink: 0;
 `;
 
 export const PositionContainer = styled.div`
-	position: absolute;
-	bottom: 0px;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
 	display: flex;
+	z-index: 100;
 `;
 
 export const NavItem = styled.div`
-	padding: 12px;
+	flex: 1;
+	max-width: 72px;
+	padding: 8px 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	text-decoration: ${({ active }) => (active ? 'underline' : 'none')};
-	text-underline-offset: 12px;
+	transition: all 0.15s ease;
+	color: ${({ active, theme }) =>
+		active ? theme.colors.accent.primary : theme.colors.text.primary};
+
+	&:active {
+		transform: scale(0.9);
+	}
+
+	svg {
+		transition: all 0.15s ease;
+	}
 `;

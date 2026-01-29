@@ -33,11 +33,11 @@ export const colors = {
 		secondary: '#5a8384',
 	},
 
-	// Text
+	// Text - high contrast
 	text: {
 		primary: '#E6ECEC',
-		secondary: 'rgba(230, 236, 236, 0.6)',
-		muted: 'rgba(230, 236, 236, 0.4)',
+		secondary: 'rgba(230, 236, 236, 0.9)',
+		muted: 'rgba(230, 236, 236, 0.6)',
 		inverse: '#0a0a0a',
 	},
 

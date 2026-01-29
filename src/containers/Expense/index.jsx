@@ -4,19 +4,26 @@ import { Input, CurrencyButton } from '../../components/Input';
 import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
-import { PageContainer, Text, Title } from '../Main/Main.styles';
+import { Card } from '../../components/Card';
+import {
+	PageWrapper,
+	PageHeader,
+	PageTitle,
+	FormField,
+	FieldLabel,
+	InputRow,
+} from '../../components/Layout';
 import {
 	useAllAcounts,
 	useCategories,
 	useSubmitExpense,
 } from '../../hooks/useAPI';
-import { InputContainer } from './Expense.styles';
 
 export function Expenses() {
-	const [category, setCategory] = useState('');
+	const [category, setCategory] = useState(null);
 	const [expense, setExpense] = useState('');
 	const [description, setDescription] = useState('');
-	const [card, setCard] = useState('');
+	const [account, setAccount] = useState(null);
 	const currencies = {
 		dollar: 'USD',
 		peso: 'COP',
@@ -28,53 +35,52 @@ export function Expenses() {
 			investmentAccounts: [],
 		},
 	});
-	const methods = [...accounts, ...investmentAccounts].map((a) => ({
+	const accountOptions = [...accounts, ...investmentAccounts].map((a) => ({
 		value: a.name,
 		label: a.name,
+		id: a.id,
+		type: accounts.includes(a) ? 'account' : 'investment_account',
 	}));
 
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
 	const { categories } = useCategories({ placeholderData: [] });
-	const categoryOptions = categories.map((cat) => {
-		return { value: cat.id, label: cat.name };
-	});
+	const categoryOptions = categories.map((cat) => ({
+		value: cat.id,
+		label: cat.name,
+	}));
+
 	const { submitExpense, loading } = useSubmitExpense({
 		onError() {
-			alert('error on submit, check console log');
+			alert('Error submitting expense');
 		},
 		onSuccess() {
 			clearInput();
 		},
 	});
 
-	function actualCurrency() {
-		if (activeCurrency === currencies.dollar)
-			setActiveCurrency(currencies.peso);
-		if (activeCurrency === currencies.peso)
-			setActiveCurrency(currencies.dollar);
+	function toggleCurrency() {
+		setActiveCurrency((prev) =>
+			prev === currencies.dollar ? currencies.peso : currencies.dollar
+		);
 	}
 
 	function clearInput() {
 		setCategory(null);
 		setExpense('');
 		setDescription('');
-		setCard(null);
+		setAccount(null);
 	}
 
-	function checkForm() {
-		if ((category === null || category === '') && expense === '')
-			alert('Please select category and input total expense');
-		else if (category === null || category === '')
-			alert('Please select category');
-		else if (expense === '') alert('Please input total expense');
-		else postData();
-	}
+	function handleSubmit() {
+		if (!category) {
+			alert('Please select a category');
+			return;
+		}
+		if (!expense) {
+			alert('Please enter an amount');
+			return;
+		}
 
-	const postData = () => {
-		const foundAccount = accounts.find((acc) => card.value.includes(acc.name));
-		const foundInvestmentAccount = investmentAccounts.find((acc) =>
-			card.value.includes(acc.name),
-		);
 		const originalAmount = Number(expense);
 		const isDollar = activeCurrency === currencies.dollar;
 		const dataToPost = {
@@ -84,60 +90,71 @@ export function Expenses() {
 				? originalAmount
 				: Number((originalAmount / 4000).toFixed(2)),
 			description: description,
-			method: card.value,
+			method: account?.value || null,
 			originalAmount,
-			account_id: foundAccount?.id || foundInvestmentAccount?.id || null,
-			account_type: foundAccount ? 'account' : 'investment_account',
+			account_id: account?.id || null,
+			account_type: account?.type || null,
 		};
 		submitExpense(dataToPost);
-	};
+	}
 
 	return (
-		<PageContainer>
-			<Title>Expense</Title>
-			<Form
-				onSubmit={(e) => {
-					e.preventDefault();
-				}}
-			>
-				<Text>Category</Text>
-				<SelectComp
-					defaultValue={category}
-					value={category}
-					options={categoryOptions}
-					onChange={(t) => {
-						setCategory(t);
-					}}
-				/>
+		<PageWrapper>
+			<PageHeader>
+				<PageTitle>Expense</PageTitle>
+			</PageHeader>
 
-				<Text>Amount</Text>
-				<InputContainer>
-					<Input type="number" value={expense} onChange={setExpense} />
-					<CurrencyButton onClick={actualCurrency}>
-						{activeCurrency}
-					</CurrencyButton>
-				</InputContainer>
+			<Card>
+				<Form onSubmit={(e) => e.preventDefault()}>
+					<FormField>
+						<FieldLabel>Category</FieldLabel>
+						<SelectComp
+							value={category}
+							options={categoryOptions}
+							onChange={setCategory}
+							placeholder="Select category..."
+						/>
+					</FormField>
 
-				<Text>Description</Text>
-				<Textarea value={description} onChange={setDescription} />
-				<Text>Payment Method (optional)</Text>
-				<SelectComp
-					defaultValue={card}
-					value={card}
-					options={methods}
-					onChange={(t) => {
-						setCard(t);
-					}}
-				/>
+					<FormField>
+						<FieldLabel>Amount</FieldLabel>
+						<InputRow>
+							<Input
+								type="number"
+								value={expense}
+								onChange={setExpense}
+								placeholder="0.00"
+							/>
+							<CurrencyButton onClick={toggleCurrency}>
+								{activeCurrency}
+							</CurrencyButton>
+						</InputRow>
+					</FormField>
 
-				<Button
-					onClick={() => {
-						checkForm();
-					}}
-				>
-					{loading ? 'Loading...' : 'SUBMIT'}
-				</Button>
-			</Form>
-		</PageContainer>
+					<FormField>
+						<FieldLabel>Description (optional)</FieldLabel>
+						<Textarea
+							value={description}
+							onChange={setDescription}
+							placeholder="What was this expense for?"
+						/>
+					</FormField>
+
+					<FormField>
+						<FieldLabel>Account (optional)</FieldLabel>
+						<SelectComp
+							value={account}
+							options={accountOptions}
+							onChange={setAccount}
+							placeholder="Select account..."
+						/>
+					</FormField>
+
+					<Button onClick={handleSubmit} disabled={loading}>
+						{loading ? 'Submitting...' : 'Submit Expense'}
+					</Button>
+				</Form>
+			</Card>
+		</PageWrapper>
 	);
 }

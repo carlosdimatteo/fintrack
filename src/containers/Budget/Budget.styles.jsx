@@ -1,78 +1,106 @@
 import styled from 'styled-components';
 
-export const BudgetContainer = styled.div`
+/**
+ * Budget-specific styles
+ * Common layout components imported from components/Layout
+ */
+
+/* Overview Card Styles */
+export const OverviewContent = styled.div`
+	display: flex;
 	flex-direction: column;
+	gap: 12px;
+`;
+
+export const RemainingRow = styled.div`
 	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+`;
+
+export const RemainingLabel = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.sm};
+	color: ${({ theme }) => theme.colors.text.muted};
+`;
+
+export const RemainingValue = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes['2xl']};
+	font-weight: ${({ theme }) => theme.typography.weights.bold};
+	color: ${({ theme }) => theme.colors.accent.primary};
+`;
+
+export const SpentTotalRow = styled.div`
+	display: flex;
+	justify-content: space-between;
 	align-items: center;
-	overflow-y: auto;
-	max-height: 100%;
-	width: 100%;
-	padding: 2rem;
-	box-sizing: border-box;
-	overflow-x: hidden;
-	@media screen and (max-width: 758px) {
-		padding: 6px;
-	}
 `;
 
-export const BudgetTitle = styled.h1`
-	font-size: 2rem;
+export const SpentTotal = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.base};
+	color: ${({ theme }) => theme.colors.text.muted};
 `;
 
-export const BudgetList = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: row;
-	width: 100%;
-	max-height: 100%;
-	padding-top: 12px;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	flex-wrap: wrap;
-	@media screen and (max-width: 758px) {
-		gap: 12px;
-	}
-	box-sizing: border-box;
-`;
-
-export const BudgetItem = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	margin: 1rem;
-	padding: 0.5rem;
-	background: ${({ theme: { gradient } }) => gradient.main.background};
-	border-radius: 10px;
-	width: ${({ fullWidth }) => (fullWidth ? '100%' : '20rem')};
-	min-height: 3rem;
-	height: max-content;
-	box-sizing: border-box;
-	@media screen and (max-width: 758px) {
-		overflow-x: auto;
-		width: ${({ fullWidth }) => (fullWidth ? '100%' : '10rem')};
-		margin: 0;
-	}
-	box-sizing: border-box;
-`;
-
-export const BudgetItemTitle = styled.span`
-	font-size: 1.1rem;
-	width: 100%;
-	text-align: left;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	display: flex;
-`;
-
-export const BudgetAmount = styled.span`
-	width: 100%;
-	font-size: 1rem;
-	font-weight: 500;
-	color: ${({ color }) => {
-		return color || 'white';
+export const SpentValue = styled.span`
+	font-weight: ${({ theme }) => theme.typography.weights.semibold};
+	color: ${({ $status }) => {
+		if ($status === 'over') return '#f87171';
+		if ($status === 'warning') return '#fbbf24';
+		return '#E6ECEC';
 	}};
-	text-align: right;
+`;
+
+/* Category Grid */
+export const CategoryGrid = styled.div`
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 10px;
+	width: 100%;
+	box-sizing: border-box;
+`;
+
+export const CategoryCard = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 10px 12px;
+	min-width: 0;
+	box-sizing: border-box;
+	border: 1px solid transparent;
+	background: 
+		linear-gradient(${({ theme }) => theme.colors.card.interior}, ${({ theme }) => theme.colors.card.interior}) padding-box,
+		${({ theme }) => theme.colors.card.borderGradient} border-box;
+	border-radius: 12px;
+`;
+
+export const CategoryName = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.sm};
+	font-weight: ${({ theme }) => theme.typography.weights.medium};
+	color: ${({ theme }) => theme.colors.text.primary};
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+`;
+
+export const CategoryAmounts = styled.div`
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+	flex-wrap: wrap;
+	min-width: 0;
+`;
+
+export const CategorySpent = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.base};
+	font-weight: ${({ theme }) => theme.typography.weights.semibold};
+	color: ${({ $status }) => {
+		if ($status === 'over') return '#f87171';
+		if ($status === 'warning') return '#fbbf24';
+		return '#E6ECEC';
+	}};
+`;
+
+export const CategoryTotal = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.sm};
+	color: ${({ theme }) => theme.colors.text.muted};
 `;
