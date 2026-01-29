@@ -115,7 +115,7 @@ export function useAccounting(options = {}) {
 	};
 }
 
-export function useAllAcounts(options = {}) {
+export function useAllAccounts(options = {}) {
 	const { data, isLoading, error } = useQuery({
 		...options,
 		staleTime: DEFAULT_STALE_TIME,
@@ -131,10 +131,126 @@ export function useAllAcounts(options = {}) {
 		},
 	});
 	return {
-		accounts: data.accounts,
-		investmentAccounts: data.investmentAccounts,
-		all: data.all,
+		accounts: data?.accounts ?? [],
+		investmentAccounts: data?.investmentAccounts ?? [],
+		all: data?.all ?? [],
 		isLoading,
 		error,
+	};
+}
+
+// Keep old name for backward compatibility
+export const useAllAcounts = useAllAccounts;
+
+// ============================================
+// Expense Hooks
+// ============================================
+
+async function getExpenses(limit = 20, offset = 0) {
+	const res = await Axios.get(`${API_URL}/expenses?limit=${limit}&offset=${offset}`);
+	return res.data;
+}
+
+async function getRecentExpenses(limit = 10) {
+	const res = await Axios.get(`${API_URL}/expenses/recent?limit=${limit}`);
+	return res.data;
+}
+
+export function useExpenseList(limit = 20, offset = 0, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['expenses', limit, offset],
+		queryFn: () => getExpenses(limit, offset),
+	});
+	return {
+		expenses: data?.expenses ?? [],
+		total: data?.total ?? 0,
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+export function useRecentExpenses(limit = 10, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['recentExpenses', limit],
+		queryFn: () => getRecentExpenses(limit),
+	});
+	return {
+		expenses: data?.expenses ?? [],
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+// ============================================
+// Debt Hooks
+// ============================================
+
+async function getDebtors() {
+	const res = await Axios.get(`${API_URL}/debtors`);
+	return res.data;
+}
+
+async function createDebtor(data) {
+	const res = await Axios.post(`${API_URL}/debtor`, data);
+	return res.data;
+}
+
+async function submitExpenseWithDebt(data) {
+	const res = await Axios.post(`${API_URL}/expense-debt`, data);
+	return res.data;
+}
+
+export function useDebtors(options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['debtors'],
+		queryFn: getDebtors,
+	});
+	return {
+		debtors: data?.debtors ?? [],
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+export function useCreateDebtor(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: createDebtor,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		createDebtor: mutate,
+		mutate,
+		reset,
+	};
+}
+
+export function useSubmitExpenseWithDebt(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: submitExpenseWithDebt,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		submitExpenseWithDebt: mutate,
+		mutate,
+		reset,
 	};
 }

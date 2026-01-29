@@ -51,7 +51,7 @@ export function Navbar() {
 						onClick={() => {
 							navigate(link);
 						}}
-						active={pathname === link}
+						active={pathname === link || pathname.startsWith(`${link}/`)}
 					>
 						{icon}
 					</NavItem>

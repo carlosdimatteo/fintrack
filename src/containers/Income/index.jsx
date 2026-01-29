@@ -8,7 +8,7 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { CurrencyButton } from '../../components/Input';
 import { SelectComp } from '../../components/Select';
-import { useAllAcounts, useSubmitIncome } from '../../hooks/useAPI';
+import { useAllAccounts, useSubmitIncome } from '../../hooks/useAPI';
 
 export function Income() {
 	const currencies = {
@@ -17,7 +17,7 @@ export function Income() {
 	};
 	const [description, setDescription] = useState('');
 	const [account, setAccount] = useState('');
-	const { accounts, investmentAccounts } = useAllAcounts({
+	const { accounts, investmentAccounts } = useAllAccounts({
 		placeholderData: {
 			accounts: [],
 			investmentAccounts: [],
@@ -29,7 +29,7 @@ export function Income() {
 	}));
 	const [activeCurrency, setActiveCurrency] = useState(currencies.dollar);
 	const [income, setIncome] = useState('');
-	const { all } = useAllAcounts({
+	const { all } = useAllAccounts({
 		placeholderData: {
 			all: [],
 		},
