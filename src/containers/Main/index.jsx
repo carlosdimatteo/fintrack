@@ -19,7 +19,7 @@ export function Main() {
 						<Route path="/" element={<Navigate to="/expenses" replace />} />
 						<Route path="/expenses/*" element={<Expenses />} />
 						<Route path="/budget" element={<Budget />} />
-						<Route path="/income" element={<Income />} />
+						<Route path="/income/*" element={<Income />} />
 						<Route path="/investment/*" element={<Investment />} />
 						<Route path="/transfers/*" element={<Transfer />} />
 						<Route path="/debts/*" element={<Debt />} />

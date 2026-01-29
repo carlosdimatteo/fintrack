@@ -83,6 +83,9 @@ const TransactionType = styled.span`
 	font-size: ${({ theme }) => theme.typography.sizes.sm};
 	font-weight: ${({ theme }) => theme.typography.weights.medium};
 	color: ${({ $outbound }) => $outbound ? '#4ade80' : '#f87171'};
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 `;
 
 const TransactionDescription = styled.span`

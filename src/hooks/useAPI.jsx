@@ -470,3 +470,62 @@ export function useTransfers(limit = 20, offset = 0, options = {}) {
 		refetch,
 	};
 }
+
+// ============================================
+// Income Hooks (Enhanced)
+// ============================================
+
+// GET /api/income - Income history with pagination
+async function getIncomeList(limit, offset) {
+	const res = await Axios.get(`${API_URL}/income`, {
+		params: { limit, offset },
+	});
+	return res.data;
+}
+
+export function useIncomeList(limit = 20, offset = 0, options = {}) {
+	const { data, isLoading, isFetching, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['incomeList', limit, offset],
+		queryFn: () => getIncomeList(limit, offset),
+	});
+	return {
+		incomes: data?.incomes ?? [],
+		count: data?.count ?? 0,
+		isLoading,
+		isFetching,
+		error,
+		refetch,
+	};
+}
+
+// GET /api/income/summary - Yearly summary by month
+async function getIncomeSummary(year) {
+	const res = await Axios.get(`${API_URL}/income/summary`, {
+		params: { year },
+	});
+	return res.data;
+}
+
+export function useIncomeSummary(year, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['incomeSummary', year],
+		queryFn: () => getIncomeSummary(year),
+	});
+	
+	// API returns array directly: [{year, month, total_income}]
+	const summary = Array.isArray(data) ? data : [];
+	const total = summary.reduce((sum, item) => sum + (item.total_income || 0), 0);
+	
+	return {
+		summary,
+		total,
+		year,
+		isLoading,
+		error,
+		refetch,
+	};
+}

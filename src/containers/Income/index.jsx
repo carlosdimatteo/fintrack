@@ -1,108 +1,39 @@
-import { useState } from 'react';
-import { PageContainer, Title } from '../Main/Main.styles';
-import { Form } from '../../components/Form';
-import { Text } from '../Main/Main.styles';
-import { InputContainer } from './Income.styles';
-import { Textarea } from '../../components/Textarea';
-import { Button } from '../../components/Button';
-import { Input } from '../../components/Input';
-import { CurrencyButton } from '../../components/Input';
-import { SelectComp } from '../../components/Select';
-import { useAllAccounts, useSubmitIncome } from '../../hooks/useAPI';
-import { CURRENCIES, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { PageWrapper, PageHeader, PageTitle } from '../../components/Layout';
+import { Tabs } from '../../components/Tabs';
+import { IncomeForm } from './IncomeForm';
+import { IncomeHistory } from './IncomeHistory';
+import { IncomeSummary } from './IncomeSummary';
+
+const TABS = [
+	{ value: '', label: 'Add' },
+	{ value: 'history', label: 'History' },
+	{ value: 'summary', label: 'Summary' },
+];
 
 export function Income() {
-	const [description, setDescription] = useState('');
-	const [account, setAccount] = useState('');
-	const { accounts, investmentAccounts } = useAllAccounts({
-		placeholderData: {
-			accounts: [],
-			investmentAccounts: [],
-		},
-	});
-	const methods = [...accounts, ...investmentAccounts].map((a) => ({
-		value: a.name,
-		label: a.name,
-	}));
-	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
-	const [income, setIncome] = useState('');
-	const { all } = useAllAccounts({
-		placeholderData: {
-			all: [],
-		},
-	});
-
-	function toggleCurrency() {
-		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
-	}
-
-	const postData = () => {
-		const foundAcc = all.find((acc) => account.value.includes(acc.name));
-
-		const dataToPost = {
-			account_name: account.value,
-			amount: income,
-			description,
-			account_id: foundAcc?.id,
-		};
-		console.log(dataToPost);
-		submitIncome(dataToPost);
+	const location = useLocation();
+	const navigate = useNavigate();
+	
+	const path = location.pathname.replace('/income', '').replace('/', '');
+	const activeTab = path || '';
+	
+	const handleTabChange = (tabValue) => {
+		navigate(`/income${tabValue ? `/${tabValue}` : ''}`);
 	};
 
-	const { submitIncome, loading } = useSubmitIncome({
-		onError() {
-			alert('error on submit, check console log');
-		},
-		onSuccess() {
-			clearInput();
-		},
-	});
-
-	function clearInput() {
-		setAccount(null);
-		setIncome('');
-		setDescription('');
-	}
-
 	return (
-		<PageContainer>
-			<Title>Income</Title>
+		<PageWrapper>
+			<PageHeader>
+				<PageTitle>Income</PageTitle>
+				<Tabs tabs={TABS} activeTab={activeTab} onChange={handleTabChange} />
+			</PageHeader>
 
-			<Form
-				onSubmit={(e) => {
-					e.preventDefault();
-				}}
-			>
-				<Text>Account</Text>
-				<SelectComp
-					defaultValue={account}
-					value={account}
-					options={methods}
-					onChange={(t) => {
-						setAccount(t);
-					}}
-				/>
-
-				<Text>Amount</Text>
-				<InputContainer>
-					<Input type="number" value={income} onChange={setIncome} />
-					<CurrencyButton onClick={toggleCurrency}>
-						{activeCurrency}
-					</CurrencyButton>
-				</InputContainer>
-				<Text>Description</Text>
-				<Textarea value={description} onChange={setDescription}></Textarea>
-
-				<Button
-					onClick={() => {
-						postData();
-					}}
-					disabled={loading}
-				>
-					{' '}
-					{'SUBMIT'}
-				</Button>
-			</Form>
-		</PageContainer>
+			<Routes>
+				<Route index element={<IncomeForm />} />
+				<Route path="history" element={<IncomeHistory />} />
+				<Route path="summary" element={<IncomeSummary />} />
+			</Routes>
+		</PageWrapper>
 	);
 }
