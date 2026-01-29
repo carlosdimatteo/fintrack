@@ -1,29 +1,30 @@
 import styled from 'styled-components';
 
 export const StyledButton = styled.button`
-	background: linear-gradient(
-		137.97deg,
-		rgb(178, 161, 214) 19.88%,
-		rgb(79, 170, 190) 123.6%
-	);
+	background: ${({ theme }) => theme.colors.tabs.activeGradient};
 	border-radius: 12px;
-	border: 1px solid;
-	padding: 8px;
-	min-width: 4rem;
-	letter-spacing: 0.2rem;
-	font-weight: bold;
+	border: none;
+	padding: 0 24px;
+	min-width: 120px;
+	letter-spacing: 0.05rem;
+	font-weight: 600;
+	font-family: ${({ theme }) => theme.typography.fontFamily};
+	font-size: 15px;
 	box-sizing: border-box;
-	max-width: 20rem;
-	width: 60%;
-	height: 3rem;
+	width: 100%;
+	height: 48px;
+	color: ${({ theme }) => theme.colors.tabs.activeText};
 	cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 	pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
-	opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+	opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+	transition: all 0.15s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
 	&:active {
-		transform: scale(0.95);
+		transform: scale(0.97);
 	}
 
 	&:hover {
-		opacity: 0.6;
+		opacity: 0.9;
 	}
 `;

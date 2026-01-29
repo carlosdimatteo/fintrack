@@ -5,6 +5,8 @@ import { Navbar } from '../../components/navbar';
 import { Budget } from '../Budget';
 import { Accounting } from '../Accounting';
 import { Income } from '../Income';
+import { Showcase } from '../Showcase';
+
 export function Main() {
 	return (
 		<MainContainer>
@@ -16,6 +18,7 @@ export function Main() {
 						<Route path="/budget" element={<Budget />} />
 						<Route path="/income" element={<Income />} />
 						<Route path="/accounting" element={<Accounting />} />
+						<Route path="/showcase" element={<Showcase />} />
 					</Routes>
 				</PageContent>
 				<Navbar />
