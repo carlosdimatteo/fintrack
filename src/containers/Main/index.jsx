@@ -8,6 +8,8 @@ import { Income } from '../Income';
 import { Debt } from '../Debt';
 import { Investment } from '../Investment';
 import { Transfer } from '../Transfer';
+import { Dashboard } from '../Dashboard';
+import { Goals } from '../Goals';
 import { Showcase } from '../Showcase';
 
 export function Main() {
@@ -17,6 +19,8 @@ export function Main() {
 				<PageContent>
 					<Routes>
 						<Route path="/" element={<Navigate to="/expenses" replace />} />
+						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/goals" element={<Goals />} />
 						<Route path="/expenses/*" element={<Expenses />} />
 						<Route path="/budget" element={<Budget />} />
 						<Route path="/income/*" element={<Income />} />
