@@ -557,6 +557,7 @@ export function useDashboard(year, month, options = {}) {
 		goals: data?.goals ?? null,
 		netWorth: data?.net_worth ?? null,
 		investments: data?.investments ?? [],
+		savingsProgress: data?.savings_progress ?? null,
 		isLoading,
 		error,
 		refetch,
@@ -631,5 +632,35 @@ export function useUpsertGoals(options = {}) {
 		upsertGoals: mutate,
 		mutate,
 		reset,
+	};
+}
+
+// ============================================
+// Budget Hooks
+// ============================================
+
+// GET /api/budget/history - Monthly budget breakdown for a year
+async function getBudgetHistory(year) {
+	const res = await Axios.get(`${API_URL}/budget/history`, {
+		params: { year },
+	});
+	return res.data;
+}
+
+export function useBudgetHistory(year, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['budgetHistory', year],
+		queryFn: () => getBudgetHistory(year),
+	});
+	return {
+		data: data ?? null,
+		months: data?.months ?? [],
+		yearlyTotals: data?.yearly_totals ?? null,
+		year: data?.year ?? year,
+		isLoading,
+		error,
+		refetch,
 	};
 }

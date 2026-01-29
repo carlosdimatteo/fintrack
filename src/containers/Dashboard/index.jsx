@@ -6,6 +6,7 @@ import { MonthSummary } from './MonthSummary';
 import { YTDSummary } from './YTDSummary';
 import { NetWorthCard } from './NetWorthCard';
 import { GoalsProgress } from './GoalsProgress';
+import { SavingsProgress } from './SavingsProgress';
 import { InvestmentMini } from './InvestmentMini';
 
 const DashboardGrid = styled.div`
@@ -75,7 +76,7 @@ export function Dashboard() {
 	const [year, setYear] = useState(currentYear);
 	const [month, setMonth] = useState(currentMonth);
 	
-	const { currentMonth: monthData, ytd, goals, netWorth, investments, isLoading, error } = useDashboard(year, month);
+	const { currentMonth: monthData, ytd, goals, netWorth, investments, savingsProgress, isLoading, error } = useDashboard(year, month);
 	
 	const isCurrentPeriod = year === currentYear && month === currentMonth;
 	
@@ -142,6 +143,8 @@ export function Dashboard() {
 				{netWorth && <NetWorthCard data={netWorth} />}
 				
 				{goals && <GoalsProgress goals={goals} ytd={ytd} />}
+				
+				{savingsProgress && <SavingsProgress data={savingsProgress} goals={goals} />}
 				
 				{investments.length > 0 && (
 					<InvestmentMini investments={investments} isHistorical={!isCurrentPeriod} />

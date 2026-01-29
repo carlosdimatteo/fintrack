@@ -22,7 +22,7 @@ export function Main() {
 						<Route path="/dashboard" element={<Dashboard />} />
 						<Route path="/goals" element={<Goals />} />
 						<Route path="/expenses/*" element={<Expenses />} />
-						<Route path="/budget" element={<Budget />} />
+						<Route path="/budget/*" element={<Budget />} />
 						<Route path="/income/*" element={<Income />} />
 						<Route path="/investment/*" element={<Investment />} />
 						<Route path="/transfers/*" element={<Transfer />} />
