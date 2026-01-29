@@ -3,7 +3,13 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 
 // Use env variable if set, otherwise use /api (works with proxy in dev)
 export const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_KEY = process.env.REACT_APP_API_KEY || '';
 const DEFAULT_STALE_TIME = 20 * 1000;
+
+// Add X-API-Key header to all requests if configured
+if (API_KEY) {
+	Axios.defaults.headers.common['X-API-Key'] = API_KEY;
+}
 
 async function submitIncome(income) {
 	const res = await Axios.post(`${API_URL}/income`, income);
