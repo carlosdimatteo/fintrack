@@ -529,3 +529,107 @@ export function useIncomeSummary(year, options = {}) {
 		refetch,
 	};
 }
+
+// ============================================
+// Dashboard Hooks
+// ============================================
+
+// GET /api/dashboard - All-in-one summary
+async function getDashboard(year, month) {
+	const params = {};
+	if (year) params.year = year;
+	if (month) params.month = month;
+	const res = await Axios.get(`${API_URL}/dashboard`, { params });
+	return res.data;
+}
+
+export function useDashboard(year, month, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['dashboard', year, month],
+		queryFn: () => getDashboard(year, month),
+	});
+	return {
+		dashboard: data ?? null,
+		currentMonth: data?.current_month ?? null,
+		ytd: data?.ytd ?? null,
+		goals: data?.goals ?? null,
+		netWorth: data?.net_worth ?? null,
+		investments: data?.investments ?? [],
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+// GET /api/net-worth/history - Historical net worth
+async function getNetWorthHistory() {
+	const res = await Axios.get(`${API_URL}/net-worth/history`);
+	return res.data;
+}
+
+export function useNetWorthHistory(options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['netWorthHistory'],
+		queryFn: getNetWorthHistory,
+	});
+	return {
+		history: Array.isArray(data) ? data : [],
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+// ============================================
+// Goals Hooks
+// ============================================
+
+// GET /api/goals - Get goals for a year
+async function getGoals(year) {
+	const res = await Axios.get(`${API_URL}/goals`, {
+		params: { year },
+	});
+	return res.data;
+}
+
+export function useGoals(year, options = {}) {
+	const { data, isLoading, error, refetch } = useQuery({
+		...options,
+		staleTime: DEFAULT_STALE_TIME,
+		queryKey: ['goals', year],
+		queryFn: () => getGoals(year),
+	});
+	return {
+		goals: data ?? null,
+		isLoading,
+		error,
+		refetch,
+	};
+}
+
+// POST /api/goals - Create or update goals (upsert)
+async function upsertGoals(data) {
+	const res = await Axios.post(`${API_URL}/goals`, data);
+	return res.data;
+}
+
+export function useUpsertGoals(options = {}) {
+	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+		...options,
+		mutationFn: upsertGoals,
+	});
+	return {
+		isPending,
+		isError,
+		isSuccess,
+		loading: isPending,
+		data,
+		upsertGoals: mutate,
+		mutate,
+		reset,
+	};
+}
