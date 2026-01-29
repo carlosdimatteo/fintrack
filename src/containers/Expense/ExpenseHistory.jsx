@@ -65,6 +65,8 @@ const Amount = styled.span`
 `;
 
 const LoadMoreButton = styled.button`
+	display: block;
+	width: 100%;
 	background: transparent;
 	border: 1px solid rgba(120, 180, 180, 0.3);
 	color: ${({ theme }) => theme.colors.accent.primary};
@@ -75,6 +77,7 @@ const LoadMoreButton = styled.button`
 	font-weight: ${({ theme }) => theme.typography.weights.medium};
 	transition: all 0.15s ease;
 	margin-top: ${({ theme }) => theme.spacing.md};
+	text-align: center;
 
 	&:hover {
 		background: rgba(120, 180, 180, 0.1);
@@ -137,13 +140,11 @@ export function ExpenseHistory() {
 					return [...prev, ...newExpenses];
 				});
 			}
-			// Handle both 'total' and 'count' field names from API
-			setTotal(data.total ?? data.count ?? 0);
+			setTotal(data.count);
 		}
 	}, [data, offset]);
 	
-	// Show load more if we got a full page (meaning there might be more)
-	const hasMore = total > 0 ? allExpenses.length < total : (data?.expenses?.length === limit);
+	const hasMore = allExpenses.length < total;
 	
 	const loadMore = () => {
 		setOffset((prev) => prev + limit);
