@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route,  useLocation, useNavigate } from 'react-router-dom';
 import { PageWrapper, PageHeader, PageTitle } from '../../components/Layout';
 import { Tabs } from '../../components/Tabs';
 import { ExpenseForm } from './ExpenseForm';

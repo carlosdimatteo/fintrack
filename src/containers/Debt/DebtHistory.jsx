@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDebtHistory, useDebtsByDebtor } from '../../hooks/useAPI';
 import { Card } from '../../components/Card';
 import { LoadingText } from '../../components/Layout';
-import { Button } from '../../components/Button';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
 const BackButton = styled.button`
