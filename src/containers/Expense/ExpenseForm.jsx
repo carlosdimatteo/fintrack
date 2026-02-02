@@ -16,6 +16,7 @@ import {
 	useDebtors,
 	useCreateDebtor,
 	useSubmitExpenseWithDebt,
+	useExchangeRate,
 } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
@@ -266,6 +267,7 @@ export function ExpenseForm({ onSuccess }) {
 	});
 	
 	const loading = expenseLoading || debtLoading;
+	const { conversionRate } = useExchangeRate();
 	
 	// Options for selects
 	const accountOptions = [...accounts, ...investmentAccounts].map((a) => ({
@@ -353,9 +355,13 @@ export function ExpenseForm({ onSuccess }) {
 	
 	function handleSubmit() {
 		if (!validate()) return;
-		
+		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
+			toast.warning('Exchange rate is loading, please wait a moment');
+			return;
+		}
+		const rate = activeCurrency === CURRENCIES.USD ? null : conversionRate;
 		const originalAmount = Number(expense);
-		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency, rate);
 		
 		const expenseData = {
 			category_id: category.value,
@@ -374,7 +380,7 @@ export function ExpenseForm({ onSuccess }) {
 				.filter((d) => d.debtor && d.amount)
 				.map((d) => ({
 					debtor_id: d.debtor.value,
-					amount: convertToUSD(Number(d.amount), activeCurrency),
+					amount: convertToUSD(Number(d.amount), activeCurrency, rate),
 				}));
 			
 			submitExpenseWithDebt({

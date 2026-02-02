@@ -670,3 +670,40 @@ export function useBudgetHistory(year, options = {}) {
 		refetch,
 	};
 }
+
+// ============================================
+// Exchange Rate (for currency conversion)
+// ============================================
+
+const STALE_12H = 4 * 60 * 60 * 1000;
+
+async function fetchExchangeRate(from, to) {
+	const res = await Axios.get(`${API_URL}/exchange-rate`, {
+		params: { from, to },
+	});
+	return res.data;
+}
+
+/**
+ * Fetches USD→COP (or other pair) from your backend. React Query caches for 12h
+ * (staleTime), so it won't refetch until stale. Only runs when a component
+ * that uses it is mounted (e.g. a form), not on app load.
+ * @see https://tanstack.com/query/latest/docs/framework/react/guides/caching
+ */
+export function useExchangeRate(from = 'USD', to = 'COP', options = {}) {
+	const { data, isFetching, isFetched } = useQuery({
+		...options,
+		queryKey: ['exchangeRate', from, to],
+		queryFn: () => fetchExchangeRate(from, to),
+		staleTime: STALE_12H,
+		gcTime: STALE_12H,
+		enabled: true,
+		retry: 1,
+	});
+
+	return {
+		conversionRate: data?.conversion_rate ?? null,
+		isFetching,
+		isFetched,
+	};
+}

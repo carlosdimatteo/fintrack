@@ -17,6 +17,7 @@ import {
 	useDebtRepayment,
 	useExpenseList,
 	useSubmitExpenseWithDebt,
+	useExchangeRate,
 } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
@@ -192,6 +193,7 @@ export function DebtForm({ onSuccess }) {
 		},
 	});
 	
+	const { conversionRate } = useExchangeRate();
 	const { submitExpenseWithDebt, loading: expenseDebtLoading } = useSubmitExpenseWithDebt({
 		onError: () => toast.error('Failed to record repayment'),
 		onSuccess: () => {
@@ -269,9 +271,13 @@ export function DebtForm({ onSuccess }) {
 	
 	function handleSubmit() {
 		if (!validate()) return;
-		
+		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
+			toast.warning('Exchange rate is loading, please wait a moment');
+			return;
+		}
+		const rate = activeCurrency === CURRENCIES.USD ? null : conversionRate;
 		const originalAmount = Number(amount);
-		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency, rate);
 		
 		if (receivedPayment) {
 			// They paid me back - creates income record

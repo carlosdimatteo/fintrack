@@ -76,6 +76,26 @@ const YearlyStats = styled.div`
 	margin-bottom: 16px;
 `;
 
+const IncomeSummaryRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 0;
+	margin-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+`;
+
+const IncomeSummaryLabel = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.sm};
+	color: ${({ theme }) => theme.colors.text.secondary};
+`;
+
+const IncomeSummaryValue = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.base};
+	font-weight: ${({ theme }) => theme.typography.weights.semibold};
+	color: ${({ $color }) => $color || '#E6ECEC'};
+`;
+
 const YearlyStat = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -214,6 +234,23 @@ const MonthIncome = styled.span`
 	color: #4ade80 !important;
 `;
 
+const MonthSummaryRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 6px 0;
+	
+	span:first-child {
+		font-size: ${({ theme }) => theme.typography.sizes.sm};
+		color: ${({ theme }) => theme.colors.text.muted};
+	}
+	
+	span:last-child {
+		font-size: ${({ theme }) => theme.typography.sizes.sm};
+		font-weight: ${({ theme }) => theme.typography.weights.medium};
+	}
+`;
+
 const ExpandIcon = styled.span`
 	color: ${({ theme }) => theme.colors.text.muted};
 	font-size: 12px;
@@ -296,6 +333,23 @@ export function BudgetHistory() {
 						</YearlyStat>
 					</YearlyStats>
 					
+					{yearlyTotals.total_income > 0 && (
+						<>
+							<IncomeSummaryRow>
+								<IncomeSummaryLabel>Spent of income</IncomeSummaryLabel>
+								<IncomeSummaryValue>
+									{((yearlyTotals.total_expenses / yearlyTotals.total_income) * 100).toFixed(1)}%
+								</IncomeSummaryValue>
+							</IncomeSummaryRow>
+							<IncomeSummaryRow>
+								<IncomeSummaryLabel>Saved (income − expenses)</IncomeSummaryLabel>
+								<IncomeSummaryValue $color={(yearlyTotals.total_income - yearlyTotals.total_expenses) >= 0 ? '#4ade80' : '#f87171'}>
+									{fmt.currency(yearlyTotals.total_income - yearlyTotals.total_expenses)}
+								</IncomeSummaryValue>
+							</IncomeSummaryRow>
+						</>
+					)}
+					
 					<CategoryList>
 						{yearlyTotals.categories
 							.filter(c => c.total_spent > 0 || c.yearly_budget > 0)
@@ -345,6 +399,20 @@ export function BudgetHistory() {
 										<span>Income:</span>
 										<MonthIncome>{fmt.currency(monthData.total_income)}</MonthIncome>
 									</MonthIncomeRow>
+									{monthData.total_income > 0 && (
+										<>
+											<MonthSummaryRow>
+												<span>Spent of income:</span>
+												<span>{((monthData.total_expenses / monthData.total_income) * 100).toFixed(1)}%</span>
+											</MonthSummaryRow>
+											<MonthSummaryRow>
+												<span>Saved (income − expenses):</span>
+												<span style={{ color: (monthData.total_income - monthData.total_expenses) >= 0 ? '#4ade80' : '#f87171' }}>
+													{fmt.currency(monthData.total_income - monthData.total_expenses)}
+												</span>
+											</MonthSummaryRow>
+										</>
+									)}
 									{monthCategories
 										.sort((a, b) => b.spent - a.spent)
 										.map((cat) => (

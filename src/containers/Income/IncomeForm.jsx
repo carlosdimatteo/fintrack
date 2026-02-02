@@ -7,7 +7,7 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
-import { useAllAccounts, useSubmitIncome } from '../../hooks/useAPI';
+import { useAllAccounts, useSubmitIncome, useExchangeRate } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 export function IncomeForm({ onSuccess }) {
@@ -21,6 +21,7 @@ export function IncomeForm({ onSuccess }) {
 	
 	// API hooks
 	const { accounts, investmentAccounts, all } = useAllAccounts();
+	const { conversionRate } = useExchangeRate();
 	
 	const { submitIncome, loading } = useSubmitIncome({
 		onError: () => toast.error('Failed to record income'),
@@ -62,9 +63,13 @@ export function IncomeForm({ onSuccess }) {
 	
 	function handleSubmit() {
 		if (!validate()) return;
-		
+		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
+			toast.warning('Exchange rate is loading, please wait a moment');
+			return;
+		}
+		const rate = activeCurrency === CURRENCIES.USD ? null : conversionRate;
 		const originalAmount = Number(amount);
-		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency, rate);
 		
 		// Find the full account info
 		const foundAcc = all.find((acc) => acc.id === account.value);

@@ -9,7 +9,7 @@ import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
-import { useAllAccounts, useCreateTransfer } from '../../hooks/useAPI';
+import { useAllAccounts, useCreateTransfer, useExchangeRate } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 const ArrowIndicator = styled.div`
@@ -58,6 +58,7 @@ export function TransferForm({ onSuccess }) {
 	
 	// API hooks
 	const { accounts } = useAllAccounts();
+	const { conversionRate } = useExchangeRate();
 	
 	const { createTransfer, loading } = useCreateTransfer({
 		onError: () => toast.error('Failed to record transfer'),
@@ -125,10 +126,15 @@ export function TransferForm({ onSuccess }) {
 	
 	function handleSubmit() {
 		if (!validate()) return;
-		
-		const srcAmountUSD = convertToUSD(sourceAmount, sourceCurrency);
+		const needRate = sourceCurrency !== CURRENCIES.USD || destCurrency !== CURRENCIES.USD;
+		if (needRate && conversionRate == null) {
+			toast.warning('Exchange rate is loading, please wait a moment');
+			return;
+		}
+		const rate = needRate ? conversionRate : null;
+		const srcAmountUSD = convertToUSD(sourceAmount, sourceCurrency, rate);
 		const dstAmountUSD = differentAmounts 
-			? convertToUSD(destAmount, destCurrency)
+			? convertToUSD(destAmount, destCurrency, rate)
 			: srcAmountUSD;
 		
 		createTransfer({

@@ -28,15 +28,17 @@ export function getExchangeRate() {
 }
 
 /**
- * Convert an amount to USD based on the source currency
+ * Convert an amount to USD based on the source currency.
  * @param {number} amount - The amount to convert
  * @param {string} currency - The source currency (USD or COP)
+ * @param {number|null} [rateOverride] - Optional COP→USD rate (e.g. from useExchangeRate); uses global if omitted
  * @returns {number} The amount in USD
  */
-export function convertToUSD(amount, currency) {
+export function convertToUSD(amount, currency, rateOverride = null) {
 	const num = Number(amount);
 	if (currency === CURRENCIES.USD) return num;
-	return Number((num / EXCHANGE_RATE).toFixed(2));
+	const rate = rateOverride != null ? rateOverride : EXCHANGE_RATE;
+	return Number((num / rate).toFixed(2));
 }
 
 /**

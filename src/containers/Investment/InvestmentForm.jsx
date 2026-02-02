@@ -9,7 +9,7 @@ import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
-import { useAllAccounts, useCreateInvestment } from '../../hooks/useAPI';
+import { useAllAccounts, useCreateInvestment, useExchangeRate } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
 
 const TypeToggle = styled.div`
@@ -65,6 +65,7 @@ export function InvestmentForm({ onSuccess }) {
 	// API hooks
 	const { accounts, investmentAccounts } = useAllAccounts();
 	
+	const { conversionRate } = useExchangeRate();
 	const { createInvestment, loading } = useCreateInvestment({
 		onError: () => toast.error('Failed to record transaction'),
 		onSuccess: () => {
@@ -114,9 +115,13 @@ export function InvestmentForm({ onSuccess }) {
 	
 	function handleSubmit() {
 		if (!validate()) return;
-		
+		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
+			toast.warning('Exchange rate is loading, please wait a moment');
+			return;
+		}
+		const rate = activeCurrency === CURRENCIES.USD ? null : conversionRate;
 		const originalAmount = Number(amount);
-		const convertedAmount = convertToUSD(originalAmount, activeCurrency);
+		const convertedAmount = convertToUSD(originalAmount, activeCurrency, rate);
 		
 		createInvestment({
 			amount: convertedAmount,
