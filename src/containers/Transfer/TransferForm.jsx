@@ -7,6 +7,7 @@ import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
+import { UsdEquivalent } from '../../components/UsdEquivalent';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
 import { useAllAccounts, useCreateTransfer, useExchangeRate } from '../../hooks/useAPI';
@@ -179,6 +180,7 @@ export function TransferForm({ onSuccess }) {
 								</CurrencyButton>
 							</InputRow>
 						</AmountRow>
+						<UsdEquivalent amount={sourceAmount} currency={sourceCurrency} conversionRate={conversionRate} />
 					</FormField>
 					
 					<ArrowIndicator>↓</ArrowIndicator>
@@ -218,6 +220,7 @@ export function TransferForm({ onSuccess }) {
 									</CurrencyButton>
 								</InputRow>
 							</AmountRow>
+							<UsdEquivalent amount={destAmount} currency={destCurrency} conversionRate={conversionRate} />
 						</FormField>
 					)}
 					

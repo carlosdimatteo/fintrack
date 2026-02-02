@@ -6,6 +6,7 @@ import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
+import { UsdEquivalent } from '../../components/UsdEquivalent';
 import { useToast } from '../../components/Toast';
 import { useAllAccounts, useSubmitIncome, useExchangeRate } from '../../hooks/useAPI';
 import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
@@ -109,6 +110,7 @@ export function IncomeForm({ onSuccess }) {
 								{activeCurrency}
 							</CurrencyButton>
 						</InputRow>
+						<UsdEquivalent amount={amount} currency={activeCurrency} conversionRate={conversionRate} />
 					</FormField>
 					
 					<FormField>

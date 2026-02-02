@@ -7,6 +7,7 @@ import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
+import { UsdEquivalent } from '../../components/UsdEquivalent';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
 import {
@@ -397,6 +398,7 @@ export function DebtForm({ onSuccess }) {
 								{activeCurrency}
 							</CurrencyButton>
 						</InputRow>
+						<UsdEquivalent amount={amount} currency={activeCurrency} conversionRate={conversionRate} />
 					</FormField>
 					
 					{/* Only show for outbound (They owe me) - received payment option */}

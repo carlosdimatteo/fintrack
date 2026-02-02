@@ -7,6 +7,7 @@ import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
+import { UsdEquivalent } from '../../components/UsdEquivalent';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
 import {
@@ -419,6 +420,7 @@ export function ExpenseForm({ onSuccess }) {
 								{activeCurrency}
 							</CurrencyButton>
 						</InputRow>
+						<UsdEquivalent amount={expense} currency={activeCurrency} conversionRate={conversionRate} />
 					</FormField>
 
 					<FormField>
