@@ -368,9 +368,10 @@ export function ExpenseForm({ onSuccess }) {
 			category_id: category.value,
 			category: category.label,
 			expense: convertedAmount,
+			original_amount: originalAmount,
+			currency: activeCurrency,
 			description: description,
 			method: account?.value || null,
-			originalAmount,
 			account_id: account?.id || null,
 			account_type: account?.type || null,
 		};
@@ -379,10 +380,15 @@ export function ExpenseForm({ onSuccess }) {
 			// Submit with debt
 			const validDebts = debts
 				.filter((d) => d.debtor && d.amount)
-				.map((d) => ({
-					debtor_id: d.debtor.value,
-					amount: convertToUSD(Number(d.amount), activeCurrency, rate),
-				}));
+				.map((d) => {
+					const debtAmount = Number(d.amount);
+					return {
+						debtor_id: d.debtor.value,
+						amount: convertToUSD(debtAmount, activeCurrency, rate),
+						original_amount: debtAmount,
+						currency: activeCurrency,
+					};
+				});
 			
 			submitExpenseWithDebt({
 				...expenseData,

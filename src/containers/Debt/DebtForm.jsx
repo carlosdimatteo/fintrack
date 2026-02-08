@@ -6,7 +6,12 @@ import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
-import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
+import {
+	FormField,
+	FieldLabel,
+	InputRow,
+	FormStack,
+} from '../../components/Layout';
 import { UsdEquivalent } from '../../components/UsdEquivalent';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
@@ -20,7 +25,11 @@ import {
 	useSubmitExpenseWithDebt,
 	useExchangeRate,
 } from '../../hooks/useAPI';
-import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
+import {
+	CURRENCIES,
+	convertToUSD,
+	toggleCurrency as toggleCurrencyUtil,
+} from '../../utils/currency';
 
 const DirectionToggle = styled.div`
 	display: flex;
@@ -33,20 +42,20 @@ const DirectionButton = styled.button`
 	flex: 1;
 	padding: 12px 16px;
 	border: none;
-	background: ${({ $active }) => 
-		$active 
+	background: ${({ $active }) =>
+		$active
 			? 'linear-gradient(135deg, rgba(90, 150, 150, 0.4) 0%, rgba(70, 130, 130, 0.3) 100%)'
 			: 'transparent'};
-	color: ${({ $active, theme }) => 
+	color: ${({ $active, theme }) =>
 		$active ? theme.colors.text.primary : theme.colors.text.muted};
 	font-size: ${({ theme }) => theme.typography.sizes.sm};
 	font-weight: ${({ theme }) => theme.typography.weights.medium};
 	cursor: pointer;
 	transition: all 0.15s ease;
-	
+
 	&:hover {
-		background: ${({ $active }) => 
-			$active 
+		background: ${({ $active }) =>
+			$active
 				? 'linear-gradient(135deg, rgba(90, 150, 150, 0.4) 0%, rgba(70, 130, 130, 0.3) 100%)'
 				: 'rgba(120, 180, 180, 0.1)'};
 	}
@@ -81,8 +90,10 @@ const SmallButton = styled.button`
 	cursor: pointer;
 	transition: all 0.15s ease;
 	border: none;
-	
-	${({ $variant }) => $variant === 'primary' ? `
+
+	${({ $variant }) =>
+		$variant === 'primary'
+			? `
 		background: linear-gradient(135deg, rgba(90, 150, 150, 0.5) 0%, rgba(70, 130, 130, 0.4) 100%);
 		color: #E6ECEC;
 		&:hover {
@@ -92,7 +103,8 @@ const SmallButton = styled.button`
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
-	` : `
+	`
+			: `
 		background: rgba(255, 255, 255, 0.08);
 		color: rgba(255, 255, 255, 0.6);
 		&:hover {
@@ -135,9 +147,32 @@ const CheckboxLabel = styled.span`
 	color: ${({ theme }) => theme.colors.text.secondary};
 `;
 
+const RepaymentOptions = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-left: 28px;
+	padding: 12px 0 0 0;
+	border-left: 2px solid ${({ theme }) => theme.colors.accent.primary + '40'};
+	padding-left: 14px;
+	margin-top: 4px;
+`;
+
+const SubCheckboxRow = styled.label`
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+`;
+
+const SubCheckboxLabel = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.sm};
+	color: ${({ theme }) => theme.colors.text.muted};
+`;
+
 export function DebtForm({ onSuccess }) {
 	const toast = useToast();
-	
+
 	// Form state
 	const [debtor, setDebtor] = useState(null);
 	const [amount, setAmount] = useState('');
@@ -146,27 +181,34 @@ export function DebtForm({ onSuccess }) {
 	const [linkedExpense, setLinkedExpense] = useState(null);
 	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
 	const [receivedPayment, setReceivedPayment] = useState(false); // They paid me back
+	const [debtNotRecordedYet, setDebtNotRecordedYet] = useState(false); // They paid me back but I hadn't tracked the debt
 	const [payingBack, setPayingBack] = useState(false); // I'm paying them back
 	const [account, setAccount] = useState(null);
-	
+
 	// Reset payment states when direction changes
 	const setDirection = (newDirection) => {
 		setDirectionState(newDirection);
 		setReceivedPayment(false);
+		setDebtNotRecordedYet(false);
 		setPayingBack(false);
 		setAccount(null);
 	};
-	
+
 	// New debtor state
 	const [showNewDebtorInput, setShowNewDebtorInput] = useState(false);
 	const [newDebtorName, setNewDebtorName] = useState('');
-	
+
 	// API hooks
-	const { debtors: debtorBalances, refetch: refetchDebtors } = useDebtsByDebtor();
+	const { debtors: debtorBalances, refetch: refetchDebtors } =
+		useDebtsByDebtor();
 	const { accounts } = useAllAccounts();
 	const { expenses: recentExpenses } = useExpenseList(20, 0);
-	
-	const { createDebt, loading: debtLoading } = useCreateDebt({
+
+	const {
+		createDebt,
+		createDebtAsync,
+		loading: debtLoading,
+	} = useCreateDebt({
 		onError: () => toast.error('Failed to create debt'),
 		onSuccess: () => {
 			toast.success('Debt recorded!');
@@ -174,8 +216,12 @@ export function DebtForm({ onSuccess }) {
 			onSuccess?.();
 		},
 	});
-	
-	const { createRepayment, loading: repaymentLoading } = useDebtRepayment({
+
+	const {
+		createRepayment,
+		createRepaymentAsync,
+		loading: repaymentLoading,
+	} = useDebtRepayment({
 		onError: () => toast.error('Failed to record repayment'),
 		onSuccess: () => {
 			toast.success('Repayment recorded!');
@@ -183,7 +229,7 @@ export function DebtForm({ onSuccess }) {
 			onSuccess?.();
 		},
 	});
-	
+
 	const { createDebtor, loading: creatingDebtor } = useCreateDebtor({
 		onError: () => toast.error('Failed to create debtor'),
 		onSuccess: () => {
@@ -193,47 +239,49 @@ export function DebtForm({ onSuccess }) {
 			refetchDebtors();
 		},
 	});
-	
+
 	const { conversionRate } = useExchangeRate();
-	const { submitExpenseWithDebt, loading: expenseDebtLoading } = useSubmitExpenseWithDebt({
-		onError: () => toast.error('Failed to record repayment'),
-		onSuccess: () => {
-			toast.success('Repayment recorded!');
-			clearForm();
-			onSuccess?.();
-		},
-	});
-	
+	const { submitExpenseWithDebt, loading: expenseDebtLoading } =
+		useSubmitExpenseWithDebt({
+			onError: () => toast.error('Failed to record repayment'),
+			onSuccess: () => {
+				toast.success('Repayment recorded!');
+				clearForm();
+				onSuccess?.();
+			},
+		});
+
 	const loading = debtLoading || repaymentLoading || expenseDebtLoading;
-	
+
 	// Options - use debtorBalances which includes name and balance
 	const debtorOptions = debtorBalances.map((d) => {
 		const netOwed = d.net_owed ?? 0;
-		const balanceStr = netOwed === 0 
-			? '' 
-			: netOwed > 0 
-				? ` | +$${netOwed.toFixed(2)}` 
-				: ` | -$${Math.abs(netOwed).toFixed(2)}`;
+		const balanceStr =
+			netOwed === 0
+				? ''
+				: netOwed > 0
+					? ` | +$${netOwed.toFixed(2)}`
+					: ` | -$${Math.abs(netOwed).toFixed(2)}`;
 		return {
 			value: d.debtor_id,
 			label: `${d.debtor_name}${balanceStr}`,
 		};
 	});
-	
+
 	const accountOptions = accounts.map((a) => ({
 		value: a.id,
 		label: a.name,
 	}));
-	
+
 	const expenseOptions = recentExpenses.map((e) => ({
 		value: e.id,
 		label: `${e.category} - $${e.expense.toFixed(2)} (${new Date(e.date).toLocaleDateString()})`,
 	}));
-	
+
 	function toggleCurrency() {
 		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
 	}
-	
+
 	function clearForm() {
 		setDebtor(null);
 		setAmount('');
@@ -241,10 +289,11 @@ export function DebtForm({ onSuccess }) {
 		setDescription('');
 		setLinkedExpense(null);
 		setReceivedPayment(false);
+		setDebtNotRecordedYet(false);
 		setPayingBack(false);
 		setAccount(null);
 	}
-	
+
 	function handleCreateDebtor() {
 		if (!newDebtorName.trim()) {
 			toast.warning('Please enter a name');
@@ -252,7 +301,7 @@ export function DebtForm({ onSuccess }) {
 		}
 		createDebtor({ name: newDebtorName.trim() });
 	}
-	
+
 	function validate() {
 		if (!debtor) {
 			toast.warning('Please select a debtor');
@@ -269,8 +318,8 @@ export function DebtForm({ onSuccess }) {
 		}
 		return true;
 	}
-	
-	function handleSubmit() {
+
+	async function handleSubmit() {
 		if (!validate()) return;
 		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
 			toast.warning('Exchange rate is loading, please wait a moment');
@@ -279,9 +328,42 @@ export function DebtForm({ onSuccess }) {
 		const rate = activeCurrency === CURRENCIES.USD ? null : conversionRate;
 		const originalAmount = Number(amount);
 		const convertedAmount = convertToUSD(originalAmount, activeCurrency, rate);
-		
+		const debtorName = debtor.label.split('|')[0].trim();
+
+		if (receivedPayment && debtNotRecordedYet) {
+			// They paid me back but we never recorded the debt: create debt then repayment (income)
+			try {
+				await createDebtAsync({
+					debtor_id: debtor.value,
+					debtor_name: debtorName,
+					amount: convertedAmount,
+					original_amount: originalAmount,
+					currency: activeCurrency,
+					outbound: true,
+					description: description || `Repayment received (debt backdated)`,
+					expense_id: linkedExpense?.value || null,
+				});
+				await createRepaymentAsync({
+					debtor_id: debtor.value,
+					debtor_name: debtor.label,
+					amount: convertedAmount,
+					account_id: account.value,
+					account: account.label,
+					description,
+					original_amount: originalAmount,
+					currency: activeCurrency,
+				});
+				toast.success('Debt and repayment recorded!');
+				clearForm();
+				onSuccess?.();
+			} catch {
+				// Error toasts are handled by mutation onError
+			}
+			return;
+		}
+
 		if (receivedPayment) {
-			// They paid me back - creates income record
+			// They paid me back - creates income record (debt already exists)
 			createRepayment({
 				debtor_id: debtor.value,
 				debtor_name: debtor.label,
@@ -289,6 +371,8 @@ export function DebtForm({ onSuccess }) {
 				account_id: account.value,
 				account: account.label,
 				description,
+				original_amount: originalAmount,
+				currency: activeCurrency,
 			});
 		} else if (payingBack) {
 			// I'm paying them back - creates expense + offsetting debt
@@ -296,21 +380,26 @@ export function DebtForm({ onSuccess }) {
 				category_id: 9, // Prestamos category
 				category: 'Prestamos',
 				expense: convertedAmount,
+				original_amount: originalAmount,
+				currency: activeCurrency,
 				description: description || `Repaying ${debtor.label}`,
 				method: account.label,
-				originalAmount: convertedAmount,
 				account_id: account.value,
 				account_type: 'account',
-				debts: [{
-					debtor_id: debtor.value,
-					amount: convertedAmount,
-				}],
+				debts: [
+					{
+						debtor_id: debtor.value,
+						amount: convertedAmount,
+						original_amount: originalAmount,
+						currency: activeCurrency,
+					},
+				],
 			});
 		} else {
 			// Regular debt record - no income/expense
 			createDebt({
 				debtor_id: debtor.value,
-				debtor_name: debtor.label,
+				debtor_name: debtor.label.split('|')[0].trim(),
 				amount: convertedAmount,
 				original_amount: originalAmount,
 				currency: activeCurrency,
@@ -320,7 +409,7 @@ export function DebtForm({ onSuccess }) {
 			});
 		}
 	}
-	
+
 	return (
 		<Card>
 			<Form onSubmit={(e) => e.preventDefault()}>
@@ -328,14 +417,14 @@ export function DebtForm({ onSuccess }) {
 					<FormField>
 						<FieldLabel>Direction</FieldLabel>
 						<DirectionToggle>
-							<DirectionButton 
+							<DirectionButton
 								type="button"
 								$active={direction === 'outbound'}
 								onClick={() => setDirection('outbound')}
 							>
 								They owe me
 							</DirectionButton>
-							<DirectionButton 
+							<DirectionButton
 								type="button"
 								$active={direction === 'inbound'}
 								onClick={() => setDirection('inbound')}
@@ -344,7 +433,7 @@ export function DebtForm({ onSuccess }) {
 							</DirectionButton>
 						</DirectionToggle>
 					</FormField>
-					
+
 					<FormField>
 						<FieldLabel>Who</FieldLabel>
 						<SelectComp
@@ -379,12 +468,15 @@ export function DebtForm({ onSuccess }) {
 								</SmallButton>
 							</NewDebtorRow>
 						) : (
-							<AddDebtorLink type="button" onClick={() => setShowNewDebtorInput(true)}>
+							<AddDebtorLink
+								type="button"
+								onClick={() => setShowNewDebtorInput(true)}
+							>
 								+ Create new debtor
 							</AddDebtorLink>
 						)}
 					</FormField>
-					
+
 					<FormField>
 						<FieldLabel>Amount</FieldLabel>
 						<InputRow>
@@ -398,9 +490,13 @@ export function DebtForm({ onSuccess }) {
 								{activeCurrency}
 							</CurrencyButton>
 						</InputRow>
-						<UsdEquivalent amount={amount} currency={activeCurrency} conversionRate={conversionRate} />
+						<UsdEquivalent
+							amount={amount}
+							currency={activeCurrency}
+							conversionRate={conversionRate}
+						/>
 					</FormField>
-					
+
 					{/* Only show for outbound (They owe me) - received payment option */}
 					{direction === 'outbound' && (
 						<>
@@ -408,20 +504,46 @@ export function DebtForm({ onSuccess }) {
 								<Checkbox
 									type="checkbox"
 									checked={receivedPayment}
-									onChange={(e) => setReceivedPayment(e.target.checked)}
+									onChange={(e) => {
+										const checked = e.target.checked;
+										setReceivedPayment(checked);
+										if (!checked) setDebtNotRecordedYet(false);
+									}}
 								/>
 								<CheckboxLabel>
 									They paid me back (creates income record)
 								</CheckboxLabel>
 							</CheckboxRow>
 							{receivedPayment && (
+								<RepaymentOptions>
+									<SubCheckboxRow>
+										<Checkbox
+											type="checkbox"
+											checked={debtNotRecordedYet}
+											onChange={(e) => setDebtNotRecordedYet(e.target.checked)}
+										/>
+										<SubCheckboxLabel>
+											I haven&apos;t recorded this debt yet
+										</SubCheckboxLabel>
+									</SubCheckboxRow>
+									{debtNotRecordedYet && (
+										<InfoTip>
+											This will create the debt (they owed me) and the income
+											(they paid me back) with the same amount. You can
+											optionally link the debt to an expense below.
+										</InfoTip>
+									)}
+								</RepaymentOptions>
+							)}
+							{receivedPayment && !debtNotRecordedYet && (
 								<InfoTip>
-									This records a repayment. It will create an income record and increase your account's expected balance.
+									This records a repayment. It will create an income record and
+									increase your account's expected balance.
 								</InfoTip>
 							)}
 						</>
 					)}
-					
+
 					{/* Only show for inbound (I owe them) - paying back option */}
 					{direction === 'inbound' && (
 						<>
@@ -437,12 +559,13 @@ export function DebtForm({ onSuccess }) {
 							</CheckboxRow>
 							{payingBack && (
 								<InfoTip>
-									This records your repayment. It will create an expense and reduce what you owe them.
+									This records your repayment. It will create an expense and
+									reduce what you owe them.
 								</InfoTip>
 							)}
 						</>
 					)}
-					
+
 					{/* Show account selector if receiving or paying */}
 					{receivedPayment && (
 						<FormField>
@@ -455,7 +578,7 @@ export function DebtForm({ onSuccess }) {
 							/>
 						</FormField>
 					)}
-					
+
 					{payingBack && (
 						<FormField>
 							<FieldLabel>Paying from account</FieldLabel>
@@ -467,7 +590,7 @@ export function DebtForm({ onSuccess }) {
 							/>
 						</FormField>
 					)}
-					
+
 					<FormField>
 						<FieldLabel>Description (optional)</FieldLabel>
 						<Textarea
@@ -476,11 +599,16 @@ export function DebtForm({ onSuccess }) {
 							placeholder="What is this debt for?"
 						/>
 					</FormField>
-					
-					{/* Only show link to expense for simple debt records */}
-					{!receivedPayment && !payingBack && (
+
+					{/* Link to expense: for simple debt records, or when backdating a debt (they paid me back but I hadn't recorded it) */}
+					{((!receivedPayment && !payingBack) ||
+						(receivedPayment && debtNotRecordedYet)) && (
 						<FormField>
-							<FieldLabel>Link to expense (optional)</FieldLabel>
+							<FieldLabel>
+								{debtNotRecordedYet
+									? 'Link this debt to an expense (optional)'
+									: 'Link to expense (optional)'}
+							</FieldLabel>
 							<SelectComp
 								value={linkedExpense}
 								options={expenseOptions}
@@ -490,15 +618,17 @@ export function DebtForm({ onSuccess }) {
 							/>
 						</FormField>
 					)}
-					
+
 					<Button onClick={handleSubmit} disabled={loading}>
-						{loading 
-							? 'Saving...' 
-							: receivedPayment 
-								? 'Record Repayment' 
-								: payingBack 
-									? 'Record Repayment' 
-									: 'Record Debt'}
+						{loading
+							? 'Saving...'
+							: receivedPayment && debtNotRecordedYet
+								? 'Record Debt & Repayment'
+								: receivedPayment
+									? 'Record Repayment'
+									: payingBack
+										? 'Record Repayment'
+										: 'Record Debt'}
 					</Button>
 				</FormStack>
 			</Form>

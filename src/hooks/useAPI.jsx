@@ -313,7 +313,7 @@ async function createDebt(data) {
 }
 
 export function useCreateDebt(options = {}) {
-	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+	const { isPending, isError, isSuccess, data, mutate, mutateAsync, reset } = useMutation({
 		...options,
 		mutationFn: createDebt,
 	});
@@ -324,6 +324,7 @@ export function useCreateDebt(options = {}) {
 		loading: isPending,
 		data,
 		createDebt: mutate,
+		createDebtAsync: mutateAsync,
 		mutate,
 		reset,
 	};
@@ -336,7 +337,7 @@ async function createRepayment(data) {
 }
 
 export function useDebtRepayment(options = {}) {
-	const { isPending, isError, isSuccess, data, mutate, reset } = useMutation({
+	const { isPending, isError, isSuccess, data, mutate, mutateAsync, reset } = useMutation({
 		...options,
 		mutationFn: createRepayment,
 	});
@@ -347,6 +348,7 @@ export function useDebtRepayment(options = {}) {
 		loading: isPending,
 		data,
 		createRepayment: mutate,
+		createRepaymentAsync: mutateAsync,
 		mutate,
 		reset,
 	};
