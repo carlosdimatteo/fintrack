@@ -345,7 +345,7 @@ export function DebtForm({ onSuccess }) {
 				});
 				await createRepaymentAsync({
 					debtor_id: debtor.value,
-					debtor_name: debtor.label,
+					debtor_name: debtorName,
 					amount: convertedAmount,
 					account_id: account.value,
 					account: account.label,
@@ -366,7 +366,7 @@ export function DebtForm({ onSuccess }) {
 			// They paid me back - creates income record (debt already exists)
 			createRepayment({
 				debtor_id: debtor.value,
-				debtor_name: debtor.label,
+				debtor_name: debtorName,
 				amount: convertedAmount,
 				account_id: account.value,
 				account: account.label,
@@ -399,7 +399,7 @@ export function DebtForm({ onSuccess }) {
 			// Regular debt record - no income/expense
 			createDebt({
 				debtor_id: debtor.value,
-				debtor_name: debtor.label.split('|')[0].trim(),
+				debtor_name: debtorName,
 				amount: convertedAmount,
 				original_amount: originalAmount,
 				currency: activeCurrency,
