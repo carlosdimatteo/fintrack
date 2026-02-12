@@ -392,6 +392,7 @@ export function DebtForm({ onSuccess }) {
 						amount: convertedAmount,
 						original_amount: originalAmount,
 						currency: activeCurrency,
+						debtor_name: debtorName,
 					},
 				],
 			});

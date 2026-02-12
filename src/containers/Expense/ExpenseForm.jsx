@@ -6,7 +6,12 @@ import { SelectComp } from '../../components/Select';
 import { Textarea } from '../../components/Textarea';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
-import { FormField, FieldLabel, InputRow, FormStack } from '../../components/Layout';
+import {
+	FormField,
+	FieldLabel,
+	InputRow,
+	FormStack,
+} from '../../components/Layout';
 import { UsdEquivalent } from '../../components/UsdEquivalent';
 import { useToast } from '../../components/Toast';
 import { InfoTip } from '../../components/InfoTip';
@@ -19,7 +24,11 @@ import {
 	useSubmitExpenseWithDebt,
 	useExchangeRate,
 } from '../../hooks/useAPI';
-import { CURRENCIES, convertToUSD, toggleCurrency as toggleCurrencyUtil } from '../../utils/currency';
+import {
+	CURRENCIES,
+	convertToUSD,
+	toggleCurrency as toggleCurrencyUtil,
+} from '../../utils/currency';
 
 // Debt split section styles
 const SplitToggle = styled.div`
@@ -38,8 +47,9 @@ const ToggleSwitch = styled.div`
 		$active
 			? 'linear-gradient(135deg, rgba(120, 180, 180, 0.6) 0%, rgba(90, 150, 150, 0.4) 100%)'
 			: 'rgba(255, 255, 255, 0.1)'};
-	border: 1px solid ${({ $active }) =>
-		$active ? 'rgba(120, 180, 180, 0.4)' : 'rgba(255, 255, 255, 0.15)'};
+	border: 1px solid
+		${({ $active }) =>
+			$active ? 'rgba(120, 180, 180, 0.4)' : 'rgba(255, 255, 255, 0.15)'};
 	position: relative;
 	transition: all 0.2s ease;
 
@@ -174,8 +184,10 @@ const SmallButton = styled.button`
 	cursor: pointer;
 	transition: all 0.15s ease;
 	border: none;
-	
-	${({ $variant }) => $variant === 'primary' ? `
+
+	${({ $variant }) =>
+		$variant === 'primary'
+			? `
 		background: linear-gradient(135deg, rgba(90, 150, 150, 0.5) 0%, rgba(70, 130, 130, 0.4) 100%);
 		color: #E6ECEC;
 		&:hover {
@@ -185,7 +197,8 @@ const SmallButton = styled.button`
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
-	` : `
+	`
+			: `
 		background: rgba(255, 255, 255, 0.08);
 		color: rgba(255, 255, 255, 0.6);
 		&:hover {
@@ -218,27 +231,29 @@ const SplitValue = styled.span`
 
 export function ExpenseForm({ onSuccess }) {
 	const toast = useToast();
-	
+
 	// Form state
 	const [category, setCategory] = useState(null);
 	const [expense, setExpense] = useState('');
 	const [description, setDescription] = useState('');
 	const [account, setAccount] = useState(null);
 	const [activeCurrency, setActiveCurrency] = useState(CURRENCIES.USD);
-	
+
 	// Debt split state
 	const [splitEnabled, setSplitEnabled] = useState(false);
 	const [debts, setDebts] = useState([{ debtor: null, amount: '' }]);
 	const [newDebtorName, setNewDebtorName] = useState('');
 	const [showNewDebtorInput, setShowNewDebtorInput] = useState(false);
-	
+
 	// API hooks
 	const { accounts, investmentAccounts } = useAllAccounts({
 		placeholderData: { accounts: [], investmentAccounts: [] },
 	});
 	const { categories } = useCategories({ placeholderData: [] });
-	const { debtors, refetch: refetchDebtors } = useDebtors({ placeholderData: { debtors: [] } });
-	
+	const { debtors, refetch: refetchDebtors } = useDebtors({
+		placeholderData: { debtors: [] },
+	});
+
 	const { submitExpense, loading: expenseLoading } = useSubmitExpense({
 		onError: () => toast.error('Failed to submit expense'),
 		onSuccess: () => {
@@ -247,16 +262,17 @@ export function ExpenseForm({ onSuccess }) {
 			onSuccess?.();
 		},
 	});
-	
-	const { submitExpenseWithDebt, loading: debtLoading } = useSubmitExpenseWithDebt({
-		onError: () => toast.error('Failed to submit expense with debt'),
-		onSuccess: () => {
-			toast.success('Expense with debt recorded!');
-			clearForm();
-			onSuccess?.();
-		},
-	});
-	
+
+	const { submitExpenseWithDebt, loading: debtLoading } =
+		useSubmitExpenseWithDebt({
+			onError: () => toast.error('Failed to submit expense with debt'),
+			onSuccess: () => {
+				toast.success('Expense with debt recorded!');
+				clearForm();
+				onSuccess?.();
+			},
+		});
+
 	const { createDebtor, loading: creatingDebtor } = useCreateDebtor({
 		onError: () => toast.error('Failed to create debtor'),
 		onSuccess: (data) => {
@@ -266,10 +282,10 @@ export function ExpenseForm({ onSuccess }) {
 			refetchDebtors();
 		},
 	});
-	
+
 	const loading = expenseLoading || debtLoading;
 	const { conversionRate } = useExchangeRate();
-	
+
 	// Options for selects
 	const accountOptions = [...accounts, ...investmentAccounts].map((a) => ({
 		value: a.name,
@@ -277,22 +293,22 @@ export function ExpenseForm({ onSuccess }) {
 		id: a.id,
 		type: accounts.includes(a) ? 'account' : 'investment_account',
 	}));
-	
+
 	const categoryOptions = categories.map((cat) => ({
 		value: cat.id,
 		label: cat.name,
 	}));
-	
+
 	const debtorOptions = debtors.map((d) => ({
 		value: d.id,
 		label: d.name,
 	}));
-	
+
 	// Handlers
 	function toggleCurrency() {
 		setActiveCurrency((prev) => toggleCurrencyUtil(prev));
 	}
-	
+
 	function clearForm() {
 		setCategory(null);
 		setExpense('');
@@ -301,21 +317,21 @@ export function ExpenseForm({ onSuccess }) {
 		setSplitEnabled(false);
 		setDebts([{ debtor: null, amount: '' }]);
 	}
-	
+
 	function addDebtRow() {
 		setDebts([...debts, { debtor: null, amount: '' }]);
 	}
-	
+
 	function removeDebtRow(index) {
 		if (debts.length > 1) {
 			setDebts(debts.filter((_, i) => i !== index));
 		}
 	}
-	
+
 	function updateDebt(index, field, value) {
 		setDebts(debts.map((d, i) => (i === index ? { ...d, [field]: value } : d)));
 	}
-	
+
 	function handleCreateDebtor() {
 		if (!newDebtorName.trim()) {
 			toast.warning('Please enter a name');
@@ -323,7 +339,7 @@ export function ExpenseForm({ onSuccess }) {
 		}
 		createDebtor({ name: newDebtorName.trim() });
 	}
-	
+
 	function validate() {
 		if (!category) {
 			toast.warning('Please select a category');
@@ -353,7 +369,7 @@ export function ExpenseForm({ onSuccess }) {
 		}
 		return true;
 	}
-	
+
 	function handleSubmit() {
 		if (!validate()) return;
 		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
@@ -363,7 +379,7 @@ export function ExpenseForm({ onSuccess }) {
 		const rate = activeCurrency === CURRENCIES.USD ? null : conversionRate;
 		const originalAmount = Number(expense);
 		const convertedAmount = convertToUSD(originalAmount, activeCurrency, rate);
-		
+
 		const expenseData = {
 			category_id: category.value,
 			category: category.label,
@@ -375,7 +391,7 @@ export function ExpenseForm({ onSuccess }) {
 			account_id: account?.id || null,
 			account_type: account?.type || null,
 		};
-		
+
 		if (splitEnabled) {
 			// Submit with debt
 			const validDebts = debts
@@ -387,9 +403,10 @@ export function ExpenseForm({ onSuccess }) {
 						amount: convertToUSD(debtAmount, activeCurrency, rate),
 						original_amount: debtAmount,
 						currency: activeCurrency,
+						debtor_name: d.debtor.label.split('|')[0].trim(),
 					};
 				});
-			
+
 			submitExpenseWithDebt({
 				...expenseData,
 				debts: validDebts,
@@ -398,7 +415,7 @@ export function ExpenseForm({ onSuccess }) {
 			submitExpense(expenseData);
 		}
 	}
-	
+
 	return (
 		<Card>
 			<Form onSubmit={(e) => e.preventDefault()}>
@@ -426,7 +443,11 @@ export function ExpenseForm({ onSuccess }) {
 								{activeCurrency}
 							</CurrencyButton>
 						</InputRow>
-						<UsdEquivalent amount={expense} currency={activeCurrency} conversionRate={conversionRate} />
+						<UsdEquivalent
+							amount={expense}
+							currency={activeCurrency}
+							conversionRate={conversionRate}
+						/>
 					</FormField>
 
 					<FormField>
@@ -447,19 +468,20 @@ export function ExpenseForm({ onSuccess }) {
 							placeholder="Select account..."
 						/>
 					</FormField>
-					
+
 					{account?.type === 'investment_account' && (
 						<InfoTip>
-							Paying from an investment account will reduce its capital, not your fiat balance.
+							Paying from an investment account will reduce its capital, not
+							your fiat balance.
 						</InfoTip>
 					)}
-					
+
 					{/* Debt Split Section */}
 					<SplitToggle onClick={() => setSplitEnabled(!splitEnabled)}>
 						<ToggleSwitch $active={splitEnabled} />
 						<ToggleLabel>Split with someone</ToggleLabel>
 					</SplitToggle>
-					
+
 					{splitEnabled && (
 						<DebtSection>
 							{debts.map((debt, index) => (
@@ -483,17 +505,20 @@ export function ExpenseForm({ onSuccess }) {
 										/>
 									</DebtRowField>
 									{debts.length > 1 && (
-										<RemoveButton type="button" onClick={() => removeDebtRow(index)}>
+										<RemoveButton
+											type="button"
+											onClick={() => removeDebtRow(index)}
+										>
 											×
 										</RemoveButton>
 									)}
 								</DebtRow>
 							))}
-							
+
 							<AddButton type="button" onClick={addDebtRow}>
 								+ Add another person
 							</AddButton>
-							
+
 							{showNewDebtorInput ? (
 								<NewDebtorRow>
 									<NewDebtorInput>
@@ -522,17 +547,24 @@ export function ExpenseForm({ onSuccess }) {
 									</NewDebtorActions>
 								</NewDebtorRow>
 							) : (
-								<AddDebtorButton type="button" onClick={() => setShowNewDebtorInput(true)}>
+								<AddDebtorButton
+									type="button"
+									onClick={() => setShowNewDebtorInput(true)}
+								>
 									+ Create new debtor
 								</AddDebtorButton>
 							)}
-							
+
 							{/* Show actual cost summary */}
-							{expense && debts.some(d => d.amount) && (
+							{expense && debts.some((d) => d.amount) && (
 								<SplitSummary>
 									<SplitLabel>Your actual cost</SplitLabel>
 									<SplitValue>
-										${(Number(expense) - debts.reduce((sum, d) => sum + (Number(d.amount) || 0), 0)).toFixed(2)}
+										$
+										{(
+											Number(expense) -
+											debts.reduce((sum, d) => sum + (Number(d.amount) || 0), 0)
+										).toFixed(2)}
 									</SplitValue>
 								</SplitSummary>
 							)}
