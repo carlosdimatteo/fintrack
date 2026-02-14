@@ -384,7 +384,7 @@ export function ExpenseForm({ onSuccess }) {
 			category_id: category.value,
 			category: category.label,
 			expense: convertedAmount,
-			original_amount: originalAmount,
+			originalAmount,
 			currency: activeCurrency,
 			description: description,
 			method: account?.value || null,
