@@ -241,6 +241,7 @@ export function ExpenseForm({ onSuccess }) {
 
 	// Debt split state
 	const [splitEnabled, setSplitEnabled] = useState(false);
+	const [splitCurrency, setSplitCurrency] = useState(CURRENCIES.USD);
 	const [debts, setDebts] = useState([{ debtor: null, amount: '' }]);
 	const [newDebtorName, setNewDebtorName] = useState('');
 	const [showNewDebtorInput, setShowNewDebtorInput] = useState(false);
@@ -315,7 +316,12 @@ export function ExpenseForm({ onSuccess }) {
 		setDescription('');
 		setAccount(null);
 		setSplitEnabled(false);
+		setSplitCurrency(CURRENCIES.USD);
 		setDebts([{ debtor: null, amount: '' }]);
+	}
+
+	function toggleSplitCurrency() {
+		setSplitCurrency((prev) => toggleCurrencyUtil(prev));
 	}
 
 	function addDebtRow() {
@@ -372,7 +378,8 @@ export function ExpenseForm({ onSuccess }) {
 
 	function handleSubmit() {
 		if (!validate()) return;
-		if (activeCurrency !== CURRENCIES.USD && conversionRate == null) {
+		const needsRate = activeCurrency !== CURRENCIES.USD || (splitEnabled && splitCurrency !== CURRENCIES.USD);
+		if (needsRate && conversionRate == null) {
 			toast.warning('Exchange rate is loading, please wait a moment');
 			return;
 		}
@@ -393,16 +400,17 @@ export function ExpenseForm({ onSuccess }) {
 		};
 
 		if (splitEnabled) {
-			// Submit with debt
+			// Splits use their own currency, independent of the expense currency.
+			const splitRate = splitCurrency === CURRENCIES.USD ? null : conversionRate;
 			const validDebts = debts
 				.filter((d) => d.debtor && d.amount)
 				.map((d) => {
 					const debtAmount = Number(d.amount);
 					return {
 						debtor_id: d.debtor.value,
-						amount: convertToUSD(debtAmount, activeCurrency, rate),
+						amount: convertToUSD(debtAmount, splitCurrency, splitRate),
 						original_amount: debtAmount,
-						currency: activeCurrency,
+						currency: splitCurrency,
 						debtor_name: d.debtor.label.split('|')[0].trim(),
 					};
 				});
@@ -484,6 +492,12 @@ export function ExpenseForm({ onSuccess }) {
 
 					{splitEnabled && (
 						<DebtSection>
+							<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+								<SmallLabel>Split currency</SmallLabel>
+								<CurrencyButton type="button" onClick={toggleSplitCurrency}>
+									{splitCurrency}
+								</CurrencyButton>
+							</div>
 							{debts.map((debt, index) => (
 								<DebtRow key={index}>
 									<DebtRowField>
@@ -555,15 +569,19 @@ export function ExpenseForm({ onSuccess }) {
 								</AddDebtorButton>
 							)}
 
-							{/* Show actual cost summary */}
+							{/* Show actual cost summary (normalized to USD so it works
+							    across mismatched expense/split currencies) */}
 							{expense && debts.some((d) => d.amount) && (
 								<SplitSummary>
 									<SplitLabel>Your actual cost</SplitLabel>
 									<SplitValue>
 										$
 										{(
-											Number(expense) -
-											debts.reduce((sum, d) => sum + (Number(d.amount) || 0), 0)
+											convertToUSD(Number(expense), activeCurrency, activeCurrency === CURRENCIES.USD ? null : conversionRate) -
+											debts.reduce(
+												(sum, d) => sum + convertToUSD(Number(d.amount) || 0, splitCurrency, splitCurrency === CURRENCIES.USD ? null : conversionRate),
+												0,
+											)
 										).toFixed(2)}
 									</SplitValue>
 								</SplitSummary>
