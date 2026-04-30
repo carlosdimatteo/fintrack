@@ -382,13 +382,21 @@ export function BudgetHistory() {
 				{months.map((monthData) => {
 					const isExpanded = expandedMonth === monthData.month;
 					const monthCategories = filterCategories(monthData.categories);
-					
+					const monthBudget = monthData.categories.reduce((sum, c) => sum + (c.budget || 0), 0);
+					const monthDiff = monthBudget - monthData.total_expenses;
+					const hasBudget = monthBudget > 0;
+
 					return (
 						<MonthCard key={monthData.month}>
 							<MonthHeader onClick={() => toggleMonth(monthData.month)}>
 								<MonthName>{MONTHS[monthData.month - 1]}</MonthName>
 								<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 									<MonthTotal>{fmt.currency(monthData.total_expenses)}</MonthTotal>
+									{hasBudget && (
+										<MonthTotal style={{ color: monthDiff >= 0 ? '#4ade80' : '#f87171' }}>
+											{monthDiff >= 0 ? '+' : ''}{fmt.currency(monthDiff)}
+										</MonthTotal>
+									)}
 									<ExpandIcon>{isExpanded ? '▼' : '▶'}</ExpandIcon>
 								</div>
 							</MonthHeader>
