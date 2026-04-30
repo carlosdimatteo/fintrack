@@ -566,6 +566,7 @@ export function useDashboard(year, month, options = {}) {
 		netWorth: data?.net_worth ?? null,
 		investments: data?.investments ?? [],
 		savingsProgress: data?.savings_progress ?? null,
+		expensesSinceLastSnapshot: data?.expenses_since_last_snapshot ?? 0,
 		isLoading,
 		error,
 		refetch,

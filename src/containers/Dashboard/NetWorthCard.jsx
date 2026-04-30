@@ -122,33 +122,47 @@ const CompareValue = styled.span`
 	color: ${({ $color }) => $color || '#E6ECEC'};
 `;
 
+const TONE_COLORS = {
+	info: { fg: '#60a5fa', bg: 'rgba(96, 165, 250, 0.1)', border: 'rgba(96, 165, 250, 0.3)' },
+	warn: { fg: '#facc15', bg: 'rgba(250, 204, 21, 0.1)', border: 'rgba(250, 204, 21, 0.3)' },
+	severe: { fg: '#f87171', bg: 'rgba(248, 113, 113, 0.1)', border: 'rgba(248, 113, 113, 0.3)' },
+};
+
 const DiscrepancyAlert = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	gap: 12px;
 	padding: 10px 12px;
 	border-radius: 8px;
-	background: ${({ $severe }) => $severe ? 'rgba(248, 113, 113, 0.1)' : 'rgba(250, 204, 21, 0.1)'};
-	border: 1px solid ${({ $severe }) => $severe ? 'rgba(248, 113, 113, 0.3)' : 'rgba(250, 204, 21, 0.3)'};
+	background: ${({ $tone }) => TONE_COLORS[$tone].bg};
+	border: 1px solid ${({ $tone }) => TONE_COLORS[$tone].border};
 `;
 
 const DiscrepancyLabel = styled.span`
 	font-size: ${({ theme }) => theme.typography.sizes.sm};
-	color: ${({ $severe }) => $severe ? '#f87171' : '#facc15'};
+	color: ${({ $tone }) => TONE_COLORS[$tone].fg};
 `;
 
 const DiscrepancyValue = styled.span`
 	font-size: ${({ theme }) => theme.typography.sizes.sm};
 	font-weight: ${({ theme }) => theme.typography.weights.semibold};
-	color: ${({ $severe }) => $severe ? '#f87171' : '#facc15'};
+	color: ${({ $tone }) => TONE_COLORS[$tone].fg};
 `;
 
-export function NetWorthCard({ data }) {
+export function NetWorthCard({ data, expensesSinceLastSnapshot = 0 }) {
 	const fmt = usePrivateFormatters();
-	
-	const discrepancy = Math.abs(data.fiat_discrepancy || 0);
+
+	const rawDiscrepancy = data.fiat_discrepancy || 0;
+	const discrepancy = Math.abs(rawDiscrepancy);
+	// Unreconciled expenses inflate the (real − expected) gap in the positive
+	// direction: real cash is unchanged but expected dropped with each new
+	// expense. Subtracting them gives the genuinely-unexplained gap.
+	const unexplained = Math.abs(rawDiscrepancy - expensesSinceLastSnapshot);
 	const hasDiscrepancy = discrepancy > 50;
-	const severeDiscrepancy = discrepancy > 500;
+	const isExplainedByLag = hasDiscrepancy && expensesSinceLastSnapshot > 0 && unexplained <= 50;
+	const severeDiscrepancy = !isExplainedByLag && discrepancy > 500;
+	const tone = isExplainedByLag ? 'info' : severeDiscrepancy ? 'severe' : 'warn';
 	
 	const totalPnL = data.total_pnl || 0;
 	const totalPnLPositive = totalPnL >= 0;
@@ -229,11 +243,13 @@ export function NetWorthCard({ data }) {
 			</Section>
 			
 			{hasDiscrepancy && (
-				<DiscrepancyAlert $severe={severeDiscrepancy}>
-					<DiscrepancyLabel $severe={severeDiscrepancy}>
-						{severeDiscrepancy ? 'Large discrepancy!' : 'Balance discrepancy'}
+				<DiscrepancyAlert $tone={tone}>
+					<DiscrepancyLabel $tone={tone}>
+						{isExplainedByLag
+							? `Accounting is behind — ${fmt.currency(expensesSinceLastSnapshot)} unreconciled, no real discrepancy`
+							: severeDiscrepancy ? 'Large discrepancy!' : 'Balance discrepancy'}
 					</DiscrepancyLabel>
-					<DiscrepancyValue $severe={severeDiscrepancy}>
+					<DiscrepancyValue $tone={tone}>
 						{fmt.currency(data.fiat_discrepancy)}
 					</DiscrepancyValue>
 				</DiscrepancyAlert>
