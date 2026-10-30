@@ -78,7 +78,7 @@ export function IncomeForm({ onSuccess }) {
 		submitIncome({
 			account_name: account.label,
 			amount: convertedAmount,
-			original_amount: originalAmount,
+			originalAmount: originalAmount,
 			currency: activeCurrency,
 			description,
 			account_id: foundAcc?.id || account.value,

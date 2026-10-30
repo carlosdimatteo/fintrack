@@ -350,7 +350,7 @@ export function DebtForm({ onSuccess }) {
 					account_id: account.value,
 					account: account.label,
 					description,
-					original_amount: originalAmount,
+					originalAmount: originalAmount,
 					currency: activeCurrency,
 				});
 				toast.success('Debt and repayment recorded!');
@@ -371,7 +371,7 @@ export function DebtForm({ onSuccess }) {
 				account_id: account.value,
 				account: account.label,
 				description,
-				original_amount: originalAmount,
+				originalAmount: originalAmount,
 				currency: activeCurrency,
 			});
 		} else if (payingBack) {
@@ -380,7 +380,7 @@ export function DebtForm({ onSuccess }) {
 				category_id: 9, // Prestamos category
 				category: 'Prestamos',
 				expense: convertedAmount,
-				original_amount: originalAmount,
+				originalAmount: originalAmount,
 				currency: activeCurrency,
 				description: description || `Repaying ${debtor.label}`,
 				method: account.label,
