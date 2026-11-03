@@ -71,16 +71,6 @@ export function BudgetCurrent() {
 								<CategorySpent>${b.spent.toFixed(2)}</CategorySpent>
 								<CategoryTotal>→ counts toward {b.rollup_category_name}</CategoryTotal>
 							</CategoryAmounts>
-						) : b.evaluate_ytd ? (
-							<>
-								<CategoryAmounts>
-									<CategorySpent $status={b.status}>${b.ytd_actual.toFixed(2)}</CategorySpent>
-									<CategoryTotal>/ ${b.ytd_budget.toFixed(2)} this year so far</CategoryTotal>
-								</CategoryAmounts>
-								<CategoryTotal>
-									This month ${b.actual.toFixed(2)} / ${b.amount} · Year ${b.full_year_budget.toFixed(2)}
-								</CategoryTotal>
-							</>
 						) : (
 							<CategoryAmounts>
 								<CategorySpent $status={b.status}>${b.actual.toFixed(2)}</CategorySpent>

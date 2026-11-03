@@ -449,14 +449,10 @@ export function BudgetHistory() {
 												</CategoryNameBlock>
 												<CategoryValues>
 													<CategorySpent $over={cat.status === 'over'}>
-														{fmt.currency(cat.evaluate_ytd ? cat.ytd_actual : cat.actual)}
+														{fmt.currency(cat.actual)}
 													</CategorySpent>
 													<CategoryBudget>
-														{cat.rollup_category_id
-															? `→ ${cat.rollup_category_name}`
-															: cat.evaluate_ytd
-																? `/ ${fmt.currency(cat.ytd_budget)} YTD`
-																: `/ ${fmt.currency(cat.budget)}`}
+														{cat.rollup_category_id ? `→ ${cat.rollup_category_name}` : `/ ${fmt.currency(cat.budget)}`}
 													</CategoryBudget>
 													<CategoryPercents>
 														<CategoryPercent $zero={cat.pct_of_expenses === 0}>
