@@ -76,7 +76,7 @@ export function Dashboard() {
 	const [year, setYear] = useState(currentYear);
 	const [month, setMonth] = useState(currentMonth);
 	
-	const { currentMonth: monthData, ytd, goals, netWorth, investments, savingsProgress, expensesSinceLastSnapshot, isLoading, error } = useDashboard(year, month);
+	const { currentMonth: monthData, ytd, goals, netWorth, investments, savingsProgress, sinceLastAccounting, isLoading, error } = useDashboard(year, month);
 	
 	const isCurrentPeriod = year === currentYear && month === currentMonth;
 	
@@ -140,7 +140,7 @@ export function Dashboard() {
 				
 				{ytd && <YTDSummary data={ytd} />}
 				
-				{netWorth && <NetWorthCard data={netWorth} expensesSinceLastSnapshot={expensesSinceLastSnapshot} />}
+				{netWorth && <NetWorthCard data={netWorth} sinceLastAccounting={sinceLastAccounting} />}
 				
 				{goals && <GoalsProgress goals={goals} ytd={ytd} />}
 				

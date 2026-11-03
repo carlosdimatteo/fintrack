@@ -33,6 +33,11 @@ const SectionTitle = styled.span`
 	color: ${({ theme }) => theme.colors.text.muted};
 `;
 
+const Hint = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.xs};
+	color: ${({ theme }) => theme.colors.text.muted};
+`;
+
 const NetWorthRow = styled.div`
 	display: flex;
 	justify-content: space-between;
@@ -137,16 +142,17 @@ export function SavingsProgress({ data, goals }) {
 			{/* Net Worth Variations */}
 			<Section>
 				<SectionTitle>Net Worth Calculations</SectionTitle>
+				<Hint>"Without gains" leaves out this year's investment gains; losses still count.</Hint>
 				<NetWorthRow>
 					<NetWorthLabel>Real Net Worth</NetWorthLabel>
 					<NetWorthValue>{fmt.currency(data.current_net_worth)}</NetWorthValue>
 				</NetWorthRow>
 				<NetWorthRow>
-					<NetWorthLabel>Without Broker PnL</NetWorthLabel>
+					<NetWorthLabel>Without Broker Gains</NetWorthLabel>
 					<NetWorthValue>{fmt.currency(data.current_without_broker_winnings)}</NetWorthValue>
 				</NetWorthRow>
 				<NetWorthRow>
-					<NetWorthLabel>Without Any PnL</NetWorthLabel>
+					<NetWorthLabel>Without Any Gains</NetWorthLabel>
 					<NetWorthValue>{fmt.currency(data.current_without_winnings)}</NetWorthValue>
 				</NetWorthRow>
 			</Section>
@@ -181,7 +187,7 @@ export function SavingsProgress({ data, goals }) {
 					{/* Without broker winnings */}
 					<GoalItem>
 						<GoalHeader>
-							<GoalLabel>Without Broker PnL</GoalLabel>
+							<GoalLabel>Without Broker Gains</GoalLabel>
 							<GoalPercent $negative={data.percentage_without_broker < 0}>
 								{data.percentage_without_broker.toFixed(1)}%
 							</GoalPercent>
@@ -203,7 +209,7 @@ export function SavingsProgress({ data, goals }) {
 					{/* Without any winnings */}
 					<GoalItem>
 						<GoalHeader>
-							<GoalLabel>Without Any PnL</GoalLabel>
+							<GoalLabel>Without Any Gains</GoalLabel>
 							<GoalPercent $negative={data.percentage_without_winnings < 0}>
 								{data.percentage_without_winnings.toFixed(1)}%
 							</GoalPercent>

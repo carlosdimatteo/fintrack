@@ -143,6 +143,13 @@ const CategoryName = styled.span`
 	white-space: nowrap;
 `;
 
+const CategoryNameBlock = styled.div`
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+`;
+
 const CategoryValues = styled.div`
 	display: flex;
 	gap: 8px;
@@ -356,7 +363,10 @@ export function BudgetHistory() {
 							.sort((a, b) => b.total_spent - a.total_spent)
 							.map((cat) => (
 								<CategoryRow key={cat.category_id}>
-									<CategoryName>{cat.category_name}</CategoryName>
+									<CategoryNameBlock>
+										<CategoryName>{cat.category_name}</CategoryName>
+										{cat.total_lent > 0 && <CategoryBudget>+ {fmt.currency(cat.total_lent)} lent</CategoryBudget>}
+									</CategoryNameBlock>
 									<CategoryValues>
 										<CategorySpent $over={cat.difference < 0}>
 											{fmt.currency(cat.total_spent)}
@@ -407,6 +417,12 @@ export function BudgetHistory() {
 										<span>Income:</span>
 										<MonthIncome>{fmt.currency(monthData.total_income)}</MonthIncome>
 									</MonthIncomeRow>
+									{monthData.total_lent > 0 && (
+										<MonthSummaryRow>
+											<span>Lent (not counted as spending):</span>
+											<span>{fmt.currency(monthData.total_lent)}</span>
+										</MonthSummaryRow>
+									)}
 									{monthData.total_income > 0 && (
 										<>
 											<MonthSummaryRow>
@@ -425,7 +441,10 @@ export function BudgetHistory() {
 										.sort((a, b) => b.spent - a.spent)
 										.map((cat) => (
 											<CategoryRow key={cat.category_id}>
-												<CategoryName>{cat.category_name}</CategoryName>
+												<CategoryNameBlock>
+													<CategoryName>{cat.category_name}</CategoryName>
+													{cat.lent > 0 && <CategoryBudget>+ {fmt.currency(cat.lent)} lent</CategoryBudget>}
+												</CategoryNameBlock>
 												<CategoryValues>
 													<CategorySpent $over={cat.difference < 0}>
 														{fmt.currency(cat.spent)}

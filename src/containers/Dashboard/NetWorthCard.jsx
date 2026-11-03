@@ -28,6 +28,11 @@ const Title = styled.h3`
 	margin: 0;
 `;
 
+const MutedText = styled.span`
+	font-size: ${({ theme }) => theme.typography.sizes.xs};
+	color: ${({ theme }) => theme.colors.text.muted};
+`;
+
 const TotalValue = styled.span`
 	font-size: ${({ theme }) => theme.typography.sizes['2xl']};
 	font-weight: ${({ theme }) => theme.typography.weights.bold};
@@ -150,20 +155,25 @@ const DiscrepancyValue = styled.span`
 	color: ${({ $tone }) => TONE_COLORS[$tone].fg};
 `;
 
-export function NetWorthCard({ data, expensesSinceLastSnapshot = 0 }) {
+export function NetWorthCard({ data, sinceLastAccounting = null }) {
 	const fmt = usePrivateFormatters();
 
-	const rawDiscrepancy = data.fiat_discrepancy || 0;
-	const discrepancy = Math.abs(rawDiscrepancy);
-	// Unreconciled expenses inflate the (real − expected) gap in the positive
-	// direction: real cash is unchanged but expected dropped with each new
-	// expense. Subtracting them gives the genuinely-unexplained gap.
-	const unexplained = Math.abs(rawDiscrepancy - expensesSinceLastSnapshot);
+	if (!data.id) {
+		return (
+			<Container>
+				<Header>
+					<Title>Net Worth</Title>
+					<MutedText>No accounting recorded for this month</MutedText>
+				</Header>
+			</Container>
+		);
+	}
+
+	const discrepancy = Math.abs(data.fiat_discrepancy || 0);
 	const hasDiscrepancy = discrepancy > 50;
-	const isExplainedByLag = hasDiscrepancy && expensesSinceLastSnapshot > 0 && unexplained <= 50;
-	const severeDiscrepancy = !isExplainedByLag && discrepancy > 500;
-	const tone = isExplainedByLag ? 'info' : severeDiscrepancy ? 'severe' : 'warn';
-	
+	const severeDiscrepancy = discrepancy > 500;
+	const tone = severeDiscrepancy ? 'severe' : 'warn';
+
 	const totalPnL = data.total_pnl || 0;
 	const totalPnLPositive = totalPnL >= 0;
 	
@@ -177,6 +187,7 @@ export function NetWorthCard({ data, expensesSinceLastSnapshot = 0 }) {
 		<Container>
 			<Header>
 				<Title>Net Worth</Title>
+				<MutedText>As of accounting on {fmt.date(data.date)}</MutedText>
 				<TotalValue>{fmt.currency(data.total_real_net_worth)}</TotalValue>
 				<TotalPnL $positive={totalPnLPositive}>
 					Total PnL: {fmt.signedCurrency(totalPnL)}
@@ -245,14 +256,45 @@ export function NetWorthCard({ data, expensesSinceLastSnapshot = 0 }) {
 			{hasDiscrepancy && (
 				<DiscrepancyAlert $tone={tone}>
 					<DiscrepancyLabel $tone={tone}>
-						{isExplainedByLag
-							? `Accounting is behind — ${fmt.currency(expensesSinceLastSnapshot)} unreconciled, no real discrepancy`
-							: severeDiscrepancy ? 'Large discrepancy!' : 'Balance discrepancy'}
+						{severeDiscrepancy ? 'Large discrepancy!' : 'Balance discrepancy'}
 					</DiscrepancyLabel>
 					<DiscrepancyValue $tone={tone}>
 						{fmt.currency(data.fiat_discrepancy)}
 					</DiscrepancyValue>
 				</DiscrepancyAlert>
+			)}
+
+			{sinceLastAccounting && (
+				<Section>
+					<SectionTitle>Logged since {fmt.date(sinceLastAccounting.since)}</SectionTitle>
+					<ExpectedVsReal>
+						<CompareRow>
+							<CompareLabel>Income</CompareLabel>
+							<CompareValue>{fmt.signedCurrency(sinceLastAccounting.income)}</CompareValue>
+						</CompareRow>
+						<CompareRow>
+							<CompareLabel>Expenses</CompareLabel>
+							<CompareValue>{fmt.signedCurrency(-sinceLastAccounting.expenses)}</CompareValue>
+						</CompareRow>
+						<CompareRow>
+							<CompareLabel>Invested</CompareLabel>
+							<CompareValue>{fmt.signedCurrency(-sinceLastAccounting.invested)}</CompareValue>
+						</CompareRow>
+						{Math.abs(sinceLastAccounting.transfers) >= 0.01 && (
+							<CompareRow>
+								<CompareLabel>Transfers (FX)</CompareLabel>
+								<CompareValue>{fmt.signedCurrency(sinceLastAccounting.transfers)}</CompareValue>
+							</CompareRow>
+						)}
+						<CompareRow>
+							<CompareLabel>Net change in your accounts</CompareLabel>
+							<CompareValue $color={sinceLastAccounting.net >= 0 ? '#4ade80' : '#f87171'}>
+								{fmt.signedCurrency(sinceLastAccounting.net)}
+							</CompareValue>
+						</CompareRow>
+					</ExpectedVsReal>
+					<MutedText>Shows up in the balances above at your next accounting</MutedText>
+				</Section>
 			)}
 		</Container>
 	);

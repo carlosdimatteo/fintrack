@@ -60,15 +60,16 @@ export function BudgetCurrent() {
 
 			{/* Category Grid */}
 			<CategoryGrid>
-				{budgets.map(({ amount, spent, category_name: category }, index) => {
+				{budgets.map(({ amount, spent, lent, category_name: category }, index) => {
 					const status = getStatus(spent, amount);
 					return (
 						<CategoryCard key={index}>
 							<CategoryName>{category}</CategoryName>
 							<CategoryAmounts>
-								<CategorySpent $status={status}>${spent}</CategorySpent>
+								<CategorySpent $status={status}>${spent.toFixed(2)}</CategorySpent>
 								<CategoryTotal>/ ${amount}</CategoryTotal>
 							</CategoryAmounts>
+							{lent > 0 && <CategoryTotal>+ ${lent.toFixed(2)} lent, not counted</CategoryTotal>}
 						</CategoryCard>
 					);
 				})}
