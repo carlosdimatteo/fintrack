@@ -30,7 +30,10 @@ export function BudgetCurrent() {
 		placeholderData: [],
 	});
 
-	const totalAmount = budgets.reduce((acc, { amount }) => acc + amount, 0);
+	// A rolled-up category's spend counts in its parent's budget, so only parents' amounts add up.
+	const totalAmount = budgets
+		.filter((b) => !b.rollup_category_id)
+		.reduce((acc, { amount }) => acc + amount, 0);
 	const totalSpent = budgets.reduce((acc, { spent }) => acc + spent, 0);
 	const remaining = totalAmount - totalSpent;
 
@@ -60,19 +63,34 @@ export function BudgetCurrent() {
 
 			{/* Category Grid */}
 			<CategoryGrid>
-				{budgets.map(({ amount, spent, lent, category_name: category }, index) => {
-					const status = getStatus(spent, amount);
-					return (
-						<CategoryCard key={index}>
-							<CategoryName>{category}</CategoryName>
+				{budgets.map((b) => (
+					<CategoryCard key={b.category_id}>
+						<CategoryName>{b.category_name}</CategoryName>
+						{b.rollup_category_id ? (
 							<CategoryAmounts>
-								<CategorySpent $status={status}>${spent.toFixed(2)}</CategorySpent>
-								<CategoryTotal>/ ${amount}</CategoryTotal>
+								<CategorySpent>${b.spent.toFixed(2)}</CategorySpent>
+								<CategoryTotal>→ counts toward {b.rollup_category_name}</CategoryTotal>
 							</CategoryAmounts>
-							{lent > 0 && <CategoryTotal>+ ${lent.toFixed(2)} lent, not counted</CategoryTotal>}
-						</CategoryCard>
-					);
-				})}
+						) : b.evaluate_ytd ? (
+							<>
+								<CategoryAmounts>
+									<CategorySpent $status={b.status}>${b.ytd_actual.toFixed(2)}</CategorySpent>
+									<CategoryTotal>/ ${b.ytd_budget.toFixed(2)} this year so far</CategoryTotal>
+								</CategoryAmounts>
+								<CategoryTotal>
+									This month ${b.actual.toFixed(2)} / ${b.amount} · Year ${b.full_year_budget.toFixed(2)}
+								</CategoryTotal>
+							</>
+						) : (
+							<CategoryAmounts>
+								<CategorySpent $status={b.status}>${b.actual.toFixed(2)}</CategorySpent>
+								<CategoryTotal>/ ${b.amount}</CategoryTotal>
+							</CategoryAmounts>
+						)}
+						{b.lent > 0 && <CategoryTotal>+ ${b.lent.toFixed(2)} lent, not counted</CategoryTotal>}
+						{b.notes && <CategoryTotal>{b.notes}</CategoryTotal>}
+					</CategoryCard>
+				))}
 			</CategoryGrid>
 		</>
 	);

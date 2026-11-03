@@ -368,10 +368,12 @@ export function BudgetHistory() {
 										{cat.total_lent > 0 && <CategoryBudget>+ {fmt.currency(cat.total_lent)} lent</CategoryBudget>}
 									</CategoryNameBlock>
 									<CategoryValues>
-										<CategorySpent $over={cat.difference < 0}>
-											{fmt.currency(cat.total_spent)}
+										<CategorySpent $over={cat.status === 'over'}>
+											{fmt.currency(cat.total_actual)}
 										</CategorySpent>
-										<CategoryBudget>/ {fmt.currency(cat.yearly_budget)}</CategoryBudget>
+										<CategoryBudget>
+											{cat.rollup_category_name ? `→ ${cat.rollup_category_name}` : `/ ${fmt.currency(cat.yearly_budget)}`}
+										</CategoryBudget>
 										<CategoryPercents>
 											<CategoryPercent $zero={cat.pct_of_expenses === 0}>
 												{cat.pct_of_expenses.toFixed(1)}% exp
@@ -392,7 +394,7 @@ export function BudgetHistory() {
 				{months.map((monthData) => {
 					const isExpanded = expandedMonth === monthData.month;
 					const monthCategories = filterCategories(monthData.categories);
-					const monthBudget = monthData.categories.reduce((sum, c) => sum + (c.budget || 0), 0);
+					const monthBudget = monthData.total_budget;
 					const monthDiff = monthBudget - monthData.total_expenses;
 					const hasBudget = monthBudget > 0;
 
@@ -446,10 +448,16 @@ export function BudgetHistory() {
 													{cat.lent > 0 && <CategoryBudget>+ {fmt.currency(cat.lent)} lent</CategoryBudget>}
 												</CategoryNameBlock>
 												<CategoryValues>
-													<CategorySpent $over={cat.difference < 0}>
-														{fmt.currency(cat.spent)}
+													<CategorySpent $over={cat.status === 'over'}>
+														{fmt.currency(cat.evaluate_ytd ? cat.ytd_actual : cat.actual)}
 													</CategorySpent>
-													<CategoryBudget>/ {fmt.currency(cat.budget)}</CategoryBudget>
+													<CategoryBudget>
+														{cat.rollup_category_id
+															? `→ ${cat.rollup_category_name}`
+															: cat.evaluate_ytd
+																? `/ ${fmt.currency(cat.ytd_budget)} YTD`
+																: `/ ${fmt.currency(cat.budget)}`}
+													</CategoryBudget>
 													<CategoryPercents>
 														<CategoryPercent $zero={cat.pct_of_expenses === 0}>
 															{cat.pct_of_expenses.toFixed(1)}% exp
