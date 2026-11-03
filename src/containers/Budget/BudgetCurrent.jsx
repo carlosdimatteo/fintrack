@@ -88,7 +88,6 @@ export function BudgetCurrent() {
 							</CategoryAmounts>
 						)}
 						{b.lent > 0 && <CategoryTotal>+ ${b.lent.toFixed(2)} lent, not counted</CategoryTotal>}
-						{b.notes && <CategoryTotal>{b.notes}</CategoryTotal>}
 					</CategoryCard>
 				))}
 			</CategoryGrid>
